@@ -9,6 +9,7 @@ frameworkVersion: '2'
 
 plugins:
   - serverless-plugin-typescript
+  - serverless-dotenv-plugin
 
 custom:
   firebaseName: zoomer-300722

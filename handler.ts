@@ -1,5 +1,5 @@
-import * as serverless from 'serverless-http';
-import * as express from 'express';
+import serverless from 'serverless-http';
+import express from 'express';
 import MeetingsRouter from './src/routes/meetings';
 
 const app = express();
