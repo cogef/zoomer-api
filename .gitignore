@@ -5,3 +5,13 @@ jspm_packages
 # Serverless directories
 .serverless
 .build
+
+# Env Vars
+.env
+.env.local
+
+# Test
+tests
+
+# Secrets
+private

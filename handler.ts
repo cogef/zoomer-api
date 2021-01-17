@@ -1,18 +1,20 @@
-'use strict';
+import * as serverless from 'serverless-http';
+import * as express from 'express';
+import MeetingsRouter from './src/routes/meetings';
 
-module.exports.meetings = async event => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify(
-      {
-        message: 'Go Serverless v1.0! Your function executed successfully!',
-        input: event,
-      },
-      null,
-      2
-    ),
-  };
+const app = express();
 
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
-};
+app.use(express.json());
+
+app.use('/meetings', MeetingsRouter);
+
+// handle pre-flight requests
+app.options('*', (req, res) => {
+  res.sendStatus(204); // No Content
+});
+
+app.all('*', (req, res) => {
+  res.sendStatus(404); // Not Found
+});
+
+export const api = serverless(app);

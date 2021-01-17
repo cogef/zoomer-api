@@ -8,6 +8,7 @@
     "outDir": ".build",
     "moduleResolution": "node",
     "lib": ["ESNext"],
-    "rootDir": "./"
+    "rootDir": "./",
+    "esModuleInterop": true
   }
 }

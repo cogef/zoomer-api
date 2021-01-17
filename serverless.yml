@@ -37,27 +37,12 @@ provider:
           - ${self:custom.firebaseName}
 
 functions:
-  messages:
-    handler: handler.meetings
+  api:
+    handler: handler.api
     events:
       - httpApi:
-          path: /meetings
-          method: 'GET'
-          authorizer:
-            name: zoomerJwtAuthorizer
-      - httpApi:
-          path: /meetings
-          method: 'POST'
-          authorizer:
-            name: zoomerJwtAuthorizer
-      - httpApi:
-          path: /meetings
-          method: 'PUT'
-          authorizer:
-            name: zoomerJwtAuthorizer
-      - httpApi:
-          path: /meetings
-          method: 'DELETE'
+          path: '*'
+          method: '*'
           authorizer:
             name: zoomerJwtAuthorizer
       - httpApi:
