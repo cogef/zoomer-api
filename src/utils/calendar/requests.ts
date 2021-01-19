@@ -1,5 +1,5 @@
 import { calendar_v3 } from 'googleapis';
-import { calendar } from '../services/google';
+import { calendar } from '../../services/google';
 
 /** Returns Zoom calendars sorted by number */
 export const getZoomCals = async () => {
@@ -43,17 +43,21 @@ export const findFirstFree = async (timeMin: string, timeMax: string, cals: Zoom
 };
 
 export const createEvent = async (cal: ZoomCal, event: EventReq) => {
-  const res = await calendar.events.insert({
-    calendarId: cal.id,
-    requestBody: {
-      summary: event.title,
-      description: event.description,
-      start: { dateTime: event.start },
-      end: { dateTime: event.end },
-    },
-  });
-  console.log({ eventRes: res });
-  return res.data.id!;
+  try {
+    const res = await calendar.events.insert({
+      calendarId: cal.id,
+      requestBody: {
+        summary: event.title,
+        description: event.description,
+        start: { dateTime: event.start },
+        end: { dateTime: event.end },
+      },
+    });
+    console.log({ eventRes: res });
+    return [null, res.data.id!] as const;
+  } catch (err) {
+    return [err, null] as const;
+  }
 };
 
 type ZoomCal = { id: string; zoomNum: number };
