@@ -10,8 +10,5 @@ jspm_packages
 .env
 .env.local
 
-# Test
-tests
-
 # Secrets
 private

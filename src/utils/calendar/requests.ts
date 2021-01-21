@@ -43,14 +43,16 @@ export const findFirstFree = async (timeMin: string, timeMax: string, cals: Zoom
 };
 
 export const createEvent = async (cal: ZoomCal, event: EventReq) => {
+  const rrule = event.recurrence ? `RRULE:${event.recurrence}` : null;
   try {
     const res = await calendar.events.insert({
       calendarId: cal.id,
       requestBody: {
         summary: event.title,
         description: event.description,
-        start: { dateTime: event.start },
-        end: { dateTime: event.end },
+        start: { dateTime: event.start, timeZone: utcTzDbName },
+        end: { dateTime: event.end, timeZone: utcTzDbName },
+        ...(rrule ? { recurrence: [rrule] } : {}),
       },
     });
     console.log({ eventRes: res });
@@ -60,6 +62,9 @@ export const createEvent = async (cal: ZoomCal, event: EventReq) => {
   }
 };
 
+/** A TZ database name that uses UTC time */
+const utcTzDbName = 'Africa/Abidjan';
+
 type ZoomCal = { id: string; zoomNum: number };
 
-type EventReq = { title: string; description: string; start: string; end: string };
+type EventReq = { title: string; description: string; start: string; end: string; recurrence?: string };

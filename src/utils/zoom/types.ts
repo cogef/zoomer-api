@@ -8,7 +8,7 @@ export type ZoomMeetingRequest = {
   password: string;
   agenda: string; // description
   recurrence?: {
-    type: 1 | 2 | 3;
+    type: 1 | 2 | 3; // 1 (daily) | 2 (weekly) | 3 (monthly)
     repeat_interval: number;
     weekly_days?: string;
     monthly_day?: number;
@@ -38,4 +38,10 @@ export type ZoomMeetingRequest = {
   };
 };
 
-export type ZoomerMeetingRequest = { ministry: string } & ZoomMeetingRequest;
+export type ZoomerMeetingRequest = {
+  ministry: string;
+  host: {
+    name: string;
+    email: string;
+  };
+} & ZoomMeetingRequest;
