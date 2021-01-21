@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { initializeGAPIs } from '../middleware';
+import { initializeGAPIs } from '../../middleware';
 import { createMeeting } from './createMeeting';
 
 const router = Router();
