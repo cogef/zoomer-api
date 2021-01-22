@@ -16,7 +16,7 @@ jobs:
           ref: master
 
       - name: Install serverless
-        run: npm i -g serverless
+        run: npm i serverless
 
       - name: Install dependencies
         run: npm i
