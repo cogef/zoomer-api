@@ -1,0 +1,31 @@
+# This workflow will do a clean install of node dependencies, then use serverless framework to compile and build typescript and deploy to AWS
+
+name: serverless-deploy
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: dev
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Install serverless
+        run: npm i -D serverless
+
+      - name: Serverless build
+        run: npm run build
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
