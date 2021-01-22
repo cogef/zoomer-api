@@ -19,7 +19,7 @@ jobs:
         run: npm i
 
       - name: Install serverless
-        run: npm i --no-save serverless
+        run: npm i -D serverless
 
       - name: Serverless build and deploy
         run: npm run deploy
