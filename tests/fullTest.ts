@@ -1,4 +1,4 @@
-import { initGAPIs } from '../src/services/google';
+import { initGAPIs } from '../src/services/googleapis';
 import { createEvent, findFirstFree, getZoomCals } from '../src/utils/calendar';
 import { zoomToRFCRecurrence } from '../src/utils/calendar/recurrence';
 import { ZoomerMeetingRequest } from '../src/utils/zoom/types';

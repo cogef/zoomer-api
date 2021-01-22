@@ -17,7 +17,7 @@ describe('converting zoom recurrence into rfc rule', () => {
       repeat_interval: 5,
       end_date_time: new Date('4/28/2021').toISOString(),
     });
-    const expected = 'FREQ=DAILY;INTERVAL=5;UNTIL=2021-04-28T04:00:00.000Z';
+    const expected = 'FREQ=DAILY;INTERVAL=5;UNTIL=20210428T040000Z';
     expect(actual).toBe(expected);
   });
 
@@ -28,7 +28,7 @@ describe('converting zoom recurrence into rfc rule', () => {
       weekly_days: '1,4,7',
       end_date_time: new Date('1/12/2021').toISOString(),
     });
-    const expected = 'FREQ=WEEKLY;INTERVAL=2;UNTIL=2021-01-12T05:00:00.000Z;BYDAY=SU,WE,SA';
+    const expected = 'FREQ=WEEKLY;INTERVAL=2;UNTIL=20210112T050000Z;BYDAY=SU,WE,SA';
     expect(actual).toBe(expected);
   });
 
@@ -63,7 +63,7 @@ describe('converting zoom recurrence into rfc rule', () => {
       monthly_day: 24,
       end_date_time: new Date('3/14/2025 3:30 PM').toISOString(),
     });
-    const expected = 'FREQ=MONTHLY;INTERVAL=11;UNTIL=2025-03-14T19:30:00.000Z;BYMONTHDAY=24';
+    const expected = 'FREQ=MONTHLY;INTERVAL=11;UNTIL=20250314T193000Z;BYMONTHDAY=24';
     expect(actual).toBe(expected);
   });
 });

@@ -1,5 +1,5 @@
 import { calendar_v3 } from 'googleapis';
-import { calendar } from '../../services/google';
+import { calendar } from '../../services/googleapis';
 
 /** Returns Zoom calendars sorted by number */
 export const getZoomCals = async () => {
