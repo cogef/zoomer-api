@@ -34,6 +34,7 @@
     "test": "jest",
     "test:full": "tsnd --transpile-only tests",
     "build": "serverless package",
+    "lint": "tsc --noEmit",
     "deploy": "serverless deploy"
   },
   "author": "Angel Campbell",
