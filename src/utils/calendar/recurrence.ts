@@ -49,7 +49,7 @@ const rfcByWkDays = (daysStr: Recurrence['weekly_days']) => {
     daysStr &&
     daysStr
       .split(',')
-      .map(d => weekDays[d.trim()])
+      .map(d => weekDays[Number(d.trim())])
       .join(',');
   return `BYDAY=${days}`;
 };

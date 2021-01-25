@@ -44,7 +44,7 @@ export const fullTest = async () => {
   await initGAPIs();
   try {
     //const res = await createMeeting(meetingReq);
-    const res = await deleteMeeting('93588307953');
+    const res = await deleteMeeting('91927318475');
     if (res.success) {
       console.log({ data: res.data });
     } else {
