@@ -1,47 +1,46 @@
-import { addMinutes } from 'date-fns';
-import { getZoomCals, findFirstFree, createEvent } from '../../../utils/calendar';
+import { addMinutes, addHours } from 'date-fns';
+import { findFirstFree, createEvent } from '../../../utils/calendar';
 import { zoomToRFCRecurrence } from '../../../utils/calendar/recurrence';
-import { storeEvent } from '../../../utils/db';
+import { getZoomAccounts, storeEvent } from '../../../utils/db';
 import { ZoomerMeetingRequest } from '../../../utils/zoom';
+import { scheduleMeeting } from '../../../utils/zoom/requests';
 import { HandlerResponse } from '../types';
 
 export const createMeeting = async (meetingReq: ZoomerMeetingRequest): Promise<HandlerResponse> => {
   const startDT = meetingReq.start_time;
   const endDT = addMinutes(new Date(startDT), meetingReq.duration).toISOString();
-  const calendars = await getZoomCals();
-  const freeCal = await findFirstFree(startDT, endDT, calendars);
+  const accounts = await getZoomAccounts();
 
-  if (freeCal) {
+  const hourBefore = addHours(new Date(startDT), -1).toISOString();
+  const hourAfter = addHours(new Date(startDT), 1).toISOString();
+
+  const freeIdx = await findFirstFree(hourBefore, hourAfter, accounts);
+  const account = accounts[freeIdx];
+
+  if (account) {
+    const meeting = await scheduleMeeting(account.email, meetingReq);
+
+    const eventDesc = `${meetingReq.agenda}\n\n----------------------\nScheduled on ${account.email}`;
+
     const eventReq = {
       title: meetingReq.topic,
-      description: meetingReq.agenda,
+      description: eventDesc,
       start: startDT,
       end: endDT,
       recurrence: meetingReq.recurrence ? zoomToRFCRecurrence(meetingReq.recurrence) : undefined,
     };
 
-    const [zoomCalErr, zoomCalEventID] = await createEvent(freeCal, eventReq);
+    const zoomCalEventID = await createEvent(account.calendarID, eventReq);
     //const [leaderCalErr, leaderCalEventID] = await createEvent(freeCal, eventReq);
-    const [leaderCalErr, leaderCalEventID] = [null as any, '~' + Math.random()];
-
-    if (zoomCalErr) {
-      throw zoomCalErr.errors[0];
-    }
-
-    if (leaderCalErr) {
-      throw leaderCalErr.errors[0];
-    }
-
-    // Create Zoom meeting
-    const meetingID = '~' + Math.random(); // createZoomMeeting
+    const leaderCalEventID = '~' + Math.random();
 
     await storeEvent({
-      zoomAccount: freeCal.zoomNum,
+      zoomAccount: account.email,
       title: meetingReq.topic,
       description: meetingReq.agenda,
       startDate: new Date(startDT),
       endDate: new Date(endDT),
-      meetingID,
+      meetingID: meeting.id,
       host: {
         ...meetingReq.host,
         ministry: meetingReq.ministry,
@@ -52,8 +51,7 @@ export const createMeeting = async (meetingReq: ZoomerMeetingRequest): Promise<H
       },
     });
 
-    console.log({ zCalEventID: zoomCalEventID });
-    return { success: true, data: { meetingID } };
+    return { success: true, data: { meetingID: meeting.id } };
   }
 
   console.log('No calendars free');

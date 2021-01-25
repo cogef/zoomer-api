@@ -1,5 +1,5 @@
 export type EventInfo = {
-  zoomAccount: number;
+  zoomAccount: string;
   title: string;
   description: string;
   startDate: Date;
@@ -17,3 +17,5 @@ export type EventInfo = {
 };
 
 export type StoredEvent = { createdAt: Date } & EventInfo;
+
+export type ZoomAccount = { calendarID: string; sequence: number; email: string };
