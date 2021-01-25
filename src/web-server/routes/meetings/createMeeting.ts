@@ -1,9 +1,8 @@
-import { addMinutes, addHours } from 'date-fns';
-import { findFirstFree, createEvent } from '../../../utils/calendar';
+import { addHours, addMinutes } from 'date-fns';
+import { createEvent, findFirstFree } from '../../../utils/calendar';
 import { zoomToRFCRecurrence } from '../../../utils/calendar/recurrence';
 import { getZoomAccounts, storeEvent } from '../../../utils/db';
-import { ZoomerMeetingRequest } from '../../../utils/zoom';
-import { scheduleMeeting } from '../../../utils/zoom/requests';
+import { scheduleMeeting, ZoomerMeetingRequest } from '../../../utils/zoom';
 import { HandlerResponse } from '../types';
 
 export const createMeeting = async (meetingReq: ZoomerMeetingRequest): Promise<HandlerResponse> => {
