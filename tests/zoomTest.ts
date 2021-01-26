@@ -4,7 +4,6 @@ import { getUser, scheduleMeeting } from '../src/utils/zoom/requests';
 const meetingReq1: ZoomerMeetingRequest = {
   agenda: 'Super important meeting',
   duration: 180,
-  host: { name: 'Angel Campbell', email: 'angel.campbell@cogef.org' },
   ministry: 'cap',
   password: '3241',
   recurrence: { type: 2, repeat_interval: 1, weekly_days: '1,4,7', end_times: 6 },
@@ -23,7 +22,6 @@ const meetingReq1: ZoomerMeetingRequest = {
 const meetingReq2: ZoomerMeetingRequest = {
   agenda: 'Super important meeting about very important stuff',
   duration: 60,
-  host: { name: 'Angel Campbell', email: 'angel.campbell@cogef.org' },
   ministry: 'cap',
   password: '2341',
   settings: {

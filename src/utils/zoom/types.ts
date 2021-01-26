@@ -39,10 +39,21 @@ export type ZoomMeetingRequest = {
   };
 };
 
-export type ZoomerMeetingRequest = {
+type ZoomerProps = {
   ministry: string;
-  host: {
-    name: string;
-    email: string;
-  };
+};
+
+export type ZoomerMeetingRequest = ZoomerProps & ZoomMeetingRequest;
+
+export type ZoomMeeting = {
+  uuid: string;
+  id: number;
+  host_id: string;
+  assistant_id?: string;
+  host_email: string;
+  created_at: string;
+  start_url: string;
+  join_url: string;
 } & ZoomMeetingRequest;
+
+export type ZoomerMeeting = ZoomerProps & ZoomMeeting;

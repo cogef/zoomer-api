@@ -1,5 +1,18 @@
 import { zoomRequest } from '../../services/zoom';
-import { ZoomMeetingRequest } from './types';
+import { ZoomMeeting, ZoomMeetingRequest } from './types';
+
+export const getMeeting = (meetingID: string) => {
+  try {
+    return zoomRequest({
+      path: `/meetings/${meetingID}`,
+    }) as Promise<ZoomMeeting>;
+  } catch (err) {
+    if (err.status === 404) {
+      return null;
+    }
+    throw err;
+  }
+};
 
 export const scheduleMeeting = (userID: string, meeting: ZoomMeetingRequest) => {
   return zoomRequest({

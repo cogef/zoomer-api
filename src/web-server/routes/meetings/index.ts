@@ -1,41 +1,29 @@
 import { Router } from 'express';
-import { initializeGAPIs } from '../../middleware';
-import { createMeeting } from './createMeeting';
-import { deleteMeeting } from './deleteMeeting';
+import { getFirebaseUser, initializeGAPIs } from '../../middleware';
+import { handleResponse } from '../../utils';
+import { createMeeting, deleteMeeting, getMeeting } from './handlers';
 
 const router = Router();
 
 export const MeetingsRouter = router;
 
 router.use(initializeGAPIs);
+router.use(getFirebaseUser);
+
+router.get('/:id', async (req, res) => {
+  const body = JSON.parse(req.body);
+  const handler = () => getMeeting(req.user!, body);
+  handleResponse(res, handler);
+});
 
 router.post('/', async (req, res) => {
-  try {
-    const body = JSON.parse(req.body);
-    const result = await createMeeting(body);
-    if (result.success) {
-      return res.status(result.code || 200).send(result.data);
-    }
-    res.status(result.code || 400).send({ error: result.error });
-  } catch (err) {
-    res.status(500).send({ error: err });
-  }
+  const body = JSON.parse(req.body);
+  const handler = () => createMeeting(req.user!, body);
+  handleResponse(res, handler);
 });
 
 router.delete('/:id', async (req, res) => {
-  try {
-    const { params } = req;
-    const result = await deleteMeeting(params.id);
-    if (result.success) {
-      return res.status(result.code || 200).send(result.data);
-    }
-    res.status(result.code || 400).send({ error: result.error });
-  } catch (err) {
-    res.status(500).send({ error: err });
-  }
-});
-
-router.get('/:id', (req, res) => {
-  const { id } = req.params;
-  res.send({ yourReq: id });
+  const { params } = req;
+  const handler = () => deleteMeeting(req.user!, params.id);
+  handleResponse(res, handler);
 });
