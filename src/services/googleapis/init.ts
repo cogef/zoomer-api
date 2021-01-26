@@ -5,7 +5,7 @@ export const initGAPIs = async () => {
   const auth = new google.auth.GoogleAuth({
     credentials: {
       client_email: credentials.SA_CLIENT_EMAIL,
-      private_key: credentials.SA_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      private_key: credentials.SA_PRIVATE_KEY,
     },
     // Scopes approved from GSuite Admin Console
     scopes: [

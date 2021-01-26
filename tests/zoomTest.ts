@@ -1,7 +1,5 @@
-import { initGAPIs } from '../src/services/googleapis';
-import { ZoomerMeetingRequest } from '../src/utils/zoom/types';
-import { createMeeting } from '../src/web-server/routes/meetings/createMeeting';
-import { deleteMeeting } from '../src/web-server/routes/meetings/deleteMeeting';
+import { ZoomerMeetingRequest } from '../src/utils/zoom';
+import { getUser, scheduleMeeting } from '../src/utils/zoom/requests';
 
 const meetingReq1: ZoomerMeetingRequest = {
   agenda: 'Super important meeting',
@@ -28,11 +26,6 @@ const meetingReq2: ZoomerMeetingRequest = {
   host: { name: 'Angel Campbell', email: 'angel.campbell@cogef.org' },
   ministry: 'cap',
   password: '2341',
-  recurrence: {
-    type: 1,
-    repeat_interval: 1,
-    end_date_time: '2021-04-28T04:57:00.000Z',
-  },
   settings: {
     host_video: false,
     participant_video: false,
@@ -42,22 +35,25 @@ const meetingReq2: ZoomerMeetingRequest = {
   },
   start_time: '2021-01-24T23:30:00.000Z',
   topic: 'Important Meeting',
-  type: 8,
+  type: 2,
 };
 
 const meetingReq = meetingReq2;
+const user = 'angel.campbell@cogef.org';
 
-export const fullTest = async () => {
-  await initGAPIs();
-  try {
-    //const res = await createMeeting(meetingReq);
-    const res = await deleteMeeting('91296139122');
-    if (res.success) {
-      console.log({ data: res.data });
+export const zoomTest = async () => {
+  scheduleMeeting(user, meetingReq).then(([err, data]) => {
+    if (err) {
+      console.error({ err });
     } else {
-      console.error({ err: res.error });
+      console.log({ data });
     }
-  } catch (err) {
-    console.trace(err);
-  }
+  });
+  //getMe().then(({ err, data }) => {
+  //  if (err) {
+  //    console.error({ err });
+  //  } else {
+  //    console.log({ data });
+  //  }
+  //});
 };

@@ -1,9 +1,11 @@
 export type HandlerResponse =
   | {
       success: true;
-      data: any;
+      data: Record<any, any>;
+      code?: number;
     }
   | {
       success: false;
       error: string;
+      code?: number;
     };
