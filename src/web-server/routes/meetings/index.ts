@@ -11,8 +11,8 @@ router.use(initializeGAPIs);
 router.use(getFirebaseUser);
 
 router.get('/:id', async (req, res) => {
-  const body = JSON.parse(req.body);
-  const handler = () => getMeeting(req.user!, body);
+  const { params } = req;
+  const handler = () => getMeeting(req.user!, params.id);
   handleResponse(res, handler);
 });
 

@@ -23,6 +23,19 @@ provider:
   stage: prod
   apiName: ${self:service}-${opt:stage, self:provider.stage}
 
+  environment:
+    SA_PROJECT_ID: ${env:SA_PROJECT_ID}
+    SA_PRIVATE_KEY_ID: ${env:SA_PRIVATE_KEY_ID}
+    SA_PRIVATE_KEY: ${env:SA_PRIVATE_KEY}
+    SA_CLIENT_EMAIL: ${env:SA_CLIENT_EMAIL}
+    SA_CLIENT_ID: ${env:SA_CLIENT_ID}
+    SA_AUTH_URI: ${env:SA_AUTH_URI}
+    SA_TOKEN_URI: ${env:SA_TOKEN_URI}
+    SA_AUTH_PROVIDER_X509_CERT_URL: ${env:SA_AUTH_PROVIDER_X509_CERT_URL}
+    SA_CLIENT_X509_CERT_URL: ${env:SA_CLIENT_X509_CERT_URL}
+    ZOOM_API_KEY: ${env:ZOOM_API_KEY}
+    ZOOM_API_SECRET: ${env:ZOOM_API_SECRET}
+
   httpApi:
     cors:
       allowedOrigins: '*'

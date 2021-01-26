@@ -8,7 +8,7 @@ export const initializeGAPIs: RequestHandler = async (req, res, next) => {
 };
 
 export const getFirebaseUser: RequestHandler = async (req, res, next) => {
-  const token = req.headers.authorization;
+  const token = req.headers.authorization?.replace(/[Bb]earer /, '');
   if (!token) {
     return res.sendStatus(401);
   }
