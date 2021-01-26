@@ -4,14 +4,14 @@ import { MeetingsRouter } from './src/web-server/routes';
 
 const app = express();
 
-app.use(express.json());
-
-app.use('/meetings', MeetingsRouter);
-
 // handle pre-flight requests
 app.options('*', (req, res) => {
   res.sendStatus(204); // No Content
 });
+
+app.use(express.json());
+
+app.use('/meetings', MeetingsRouter);
 
 app.all('*', (req, res) => {
   res.sendStatus(404); // Not Found
