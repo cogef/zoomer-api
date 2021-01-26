@@ -10,7 +10,13 @@ const meetingReq1: ZoomerMeetingRequest = {
   ministry: 'cap',
   password: '3241',
   recurrence: { type: 2, repeat_interval: 1, weekly_days: '1,4,7', end_times: 6 },
-  settings: { host_video: false, participant_video: false, join_before_host: true, mute_upon_entry: true },
+  settings: {
+    host_video: false,
+    participant_video: false,
+    join_before_host: true,
+    mute_upon_entry: true,
+    waiting_room: false,
+  },
   start_time: '2021-01-24T22:00:00.000Z',
   topic: 'Important Meeting',
   type: 8,
@@ -32,6 +38,7 @@ const meetingReq2: ZoomerMeetingRequest = {
     participant_video: false,
     join_before_host: true,
     mute_upon_entry: true,
+    waiting_room: false,
   },
   start_time: '2021-01-24T23:30:00.000Z',
   topic: 'Important Meeting',
@@ -44,7 +51,7 @@ export const fullTest = async () => {
   await initGAPIs();
   try {
     //const res = await createMeeting(meetingReq);
-    const res = await deleteMeeting('91927318475');
+    const res = await deleteMeeting('91296139122');
     if (res.success) {
       console.log({ data: res.data });
     } else {

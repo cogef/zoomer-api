@@ -6,7 +6,7 @@ import { HandlerResponse } from '../types';
 export const deleteMeeting = async (meetingID: string): Promise<HandlerResponse> => {
   const dbMeeting = await DB.getEvent(meetingID);
   if (!dbMeeting) {
-    return { success: false, error: 'meeting not found' };
+    return { success: false, error: 'meeting not found', code: 404 };
   }
 
   const zoomAccount = await DB.getZoomAccount(dbMeeting.zoomAccount);
@@ -19,5 +19,5 @@ export const deleteMeeting = async (meetingID: string): Promise<HandlerResponse>
   //await Calendar.deleteEvent(zoomAccount.calendarID, dbMeeting.calendarEvents.leadershipEventID);
   await DB.removeEvent(meetingID);
 
-  return { success: true, data: null };
+  return { success: true, data: {}, code: 204 };
 };

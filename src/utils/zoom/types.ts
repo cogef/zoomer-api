@@ -33,6 +33,7 @@ export type ZoomMeetingRequest = {
     enforce_login?: never; // boolean;
     enforce_login_domains?: never; // string;
     alternative_hosts?: never; // string;
+    waiting_room: boolean;
     global_dial_in_countries?: never; //string[];
     registrants_email_notification?: never; // boolean;
   };
