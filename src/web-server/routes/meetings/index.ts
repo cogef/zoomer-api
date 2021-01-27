@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { validateUser, initializeGAPIs } from '../../middleware';
-import { handleResponse } from '../../utils';
+import { handleResponse } from '../../helpers';
 import { createMeeting, deleteMeeting, getMeeting } from './handlers';
 import { getStartURL } from './handlers/getStartURL';
 

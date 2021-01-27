@@ -1,8 +1,8 @@
 import { User } from '../../../../utils/auth';
 import * as DB from '../../../../utils/db';
 import * as Zoom from '../../../../utils/zoom';
-import { HandlerResponse } from '../../../utils';
-import { isAuthorized } from '../utils';
+import { HandlerResponse } from '../../../helpers';
+import { isAuthorized } from '../helpers';
 
 export const getMeeting = async (user: User, meetingID: string): Promise<HandlerResponse> => {
   const event = await DB.getEvent(meetingID);

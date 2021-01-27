@@ -3,8 +3,8 @@ import { User } from '../../../../utils/auth';
 import * as Calendar from '../../../../utils/calendar';
 import * as DB from '../../../../utils/db';
 import * as Zoom from '../../../../utils/zoom';
-import { HandlerResponse } from '../../../utils';
-import { isAuthorized } from '../utils';
+import { HandlerResponse } from '../../../helpers';
+import { isAuthorized } from '../helpers';
 
 export const updateMeeting = async (
   user: User,
@@ -59,7 +59,7 @@ export const updateMeeting = async (
       description: meetingReq.agenda,
       startDate: new Date(startDT),
       endDate: new Date(endDT),
-      meetingID: meeting.id,
+      meetingID: String(meeting.id),
       hostJoinKey: dbEvent.hostJoinKey,
       host: {
         name: user.displayName!,

@@ -1,5 +1,5 @@
 import { zoomRequest } from '../../services/zoom';
-import { ZoomMeeting, ZoomMeetingRequest } from './types';
+import { ZoomMeeting, ZoomMeetingRequest, ZoomUser } from './types';
 
 export const getMeeting = (meetingID: string) => {
   try {
@@ -19,7 +19,7 @@ export const scheduleMeeting = (userID: string, meeting: ZoomMeetingRequest) => 
     path: `/users/${userID}/meetings`,
     method: 'POST',
     body: meeting,
-  });
+  }) as Promise<ZoomMeeting>;
 };
 
 export const cancelMeeting = (meetingID: string) => {
@@ -31,5 +31,12 @@ export const cancelMeeting = (meetingID: string) => {
 };
 
 export const getUser = (userID: string) => {
-  return zoomRequest({ path: `/users/${userID}` });
+  try {
+    return zoomRequest({ path: `/users/${userID}` }) as Promise<ZoomUser>;
+  } catch (err) {
+    if (err.status === 404) {
+      return null;
+    }
+    throw err;
+  }
 };
