@@ -3,9 +3,9 @@
 name: serverless-deploy
 
 on:
-  - push:
-    branches: [master]
-  - workflow_dispatch
+  push:
+      branches: [master]
+  workflow_dispatch:
 
 jobs:
   deploy:
