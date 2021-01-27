@@ -32,7 +32,7 @@ export const findFirstFree = async (timeMin: string, durationMins: number, cals:
 };
 
 export const createEvent = async (calendarID: string, event: EventReq) => {
-  const rrule = event.recurrence ? `RRULE:${event.recurrence}` : null;
+  const rrule = event.recurrence || null;
   const res = await calendar.events.insert({
     calendarId: calendarID,
     requestBody: {
