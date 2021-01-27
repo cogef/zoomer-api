@@ -5,6 +5,7 @@ export type EventInfo = {
   startDate: Date;
   endDate: Date;
   meetingID: string;
+  hostJoinKey: string;
   host: {
     ministry: string;
     email: string;

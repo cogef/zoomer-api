@@ -2,6 +2,7 @@ import { User } from '../../../../utils/auth';
 import * as DB from '../../../../utils/db';
 import * as Zoom from '../../../../utils/zoom';
 import { HandlerResponse } from '../../../utils';
+import { isAuthorized } from '../utils';
 
 export const getMeeting = async (user: User, meetingID: string): Promise<HandlerResponse> => {
   const event = await DB.getEvent(meetingID);
@@ -15,7 +16,7 @@ export const getMeeting = async (user: User, meetingID: string): Promise<Handler
     return { success: false, error: 'meeting not found', code: 404 };
   }
 
-  if (event.host.email !== user.email) {
+  if (!isAuthorized(event, user)) {
     return { success: false, error: 'not authorized to access meeting', code: 401 };
   }
 

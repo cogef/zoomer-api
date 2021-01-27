@@ -1,14 +1,33 @@
+import { addMinutes } from 'date-fns';
+import { rrulestr } from 'rrule';
 import { calendar } from '../../services/googleapis';
 
 /** Finds the first calendar that is free within the given range, using the order listed in `cals` */
-export const findFirstFree = async (timeMin: string, timeMax: string, cals: ZoomCal[]) => {
-  const { data } = await calendar.freebusy.query({
-    requestBody: { timeMin, timeMax, items: cals.map(cal => ({ id: cal.calendarID })) },
-  });
+export const findFirstFree = async (timeMin: string, durationMins: number, cals: ZoomCal[], rrule?: string) => {
+  const dates = rrule ? rrulestr(rrule).all() : [new Date(timeMin)];
+  const calItems = cals.map(cal => ({ id: cal.calendarID }));
+  const busyCals = new Set();
 
-  const calendars = data.calendars!;
+  await Promise.all(
+    dates.map(async date => {
+      const dtStart = date.toISOString();
+      const dtEnd = addMinutes(date, durationMins).toISOString();
 
-  const freeIdx = cals.findIndex(cal => calendars[cal.calendarID].busy?.length === 0);
+      const { data } = await calendar.freebusy.query({
+        requestBody: { timeMin: dtStart, timeMax: dtEnd, items: calItems },
+      });
+
+      const calResults = data.calendars!;
+
+      cals.forEach(cal => {
+        if (calResults[cal.calendarID].busy?.length) {
+          busyCals.add(cal.calendarID);
+        }
+      });
+    })
+  );
+
+  const freeIdx = cals.findIndex(cal => !busyCals.has(cal.calendarID));
   return freeIdx;
 };
 
