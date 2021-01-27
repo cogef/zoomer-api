@@ -1,6 +1,6 @@
 # This workflow will do a clean install of node dependencies, then use serverless framework to compile and build typescript and deploy to AWS
 
-name: serverless-deploy
+name: dev-build
 
 on:
   push:
