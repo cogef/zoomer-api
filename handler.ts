@@ -1,8 +1,11 @@
 import serverless from 'serverless-http';
 import express from 'express';
 import { MeetingsRouter } from './src/web-server/routes';
+import { logRequest } from './src/web-server/middleware';
 
 const app = express();
+
+app.use(logRequest);
 
 // handle pre-flight requests
 app.options('*', (req, res) => {

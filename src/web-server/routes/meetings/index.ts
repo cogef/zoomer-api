@@ -16,14 +16,13 @@ router.post('/:id/start_url', (req, res) => {
 });
 
 router.use(validateUser);
+router.use(initializeGAPIs);
 
 router.get('/:id', (req, res) => {
   const { params } = req;
   const handler = () => getMeeting(req.user!, params.id);
   handleResponse(res, handler);
 });
-
-router.use(initializeGAPIs);
 
 router.post('/', (req, res) => {
   const body = JSON.parse(req.body);

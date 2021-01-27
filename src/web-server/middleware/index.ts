@@ -18,3 +18,11 @@ export const validateUser: RequestHandler = async (req, res, next) => {
   req.user = user;
   next();
 };
+
+export const logRequest: RequestHandler = (req, res, next) => {
+  console.debug({
+    path: req.path,
+    method: req.method,
+  });
+  next();
+};
