@@ -10,11 +10,12 @@ export const getMeeting = async (user: User, meetingID: string): Promise<Handler
   }
 
   const meeting = await Zoom.getMeeting(meetingID);
+
   if (!meeting) {
     return { success: false, error: 'meeting not found', code: 404 };
   }
 
-  if (meeting.host_email !== user.email) {
+  if (event.host.email !== user.email) {
     return { success: false, error: 'not authorized to access meeting', code: 401 };
   }
 
