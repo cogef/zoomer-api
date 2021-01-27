@@ -75,7 +75,7 @@ describe('converting zoom recurrence into rfc rule', () => {
         monthly_day: 24,
         end_date_time: new Date('3/14/2025 3:30 PM GMT-4').toISOString(),
       },
-      new Date('1/27/2021 12:00 AM').toISOString()
+      new Date('1/27/2021 12:00 AM GMT-5').toISOString()
     );
     const expected = 'DTSTART:20210127T050000Z\nRRULE:FREQ=MONTHLY;INTERVAL=11;UNTIL=20250314T193000Z;BYMONTHDAY=24';
     expect(actual).toBe(expected);
