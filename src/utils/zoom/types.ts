@@ -54,6 +54,16 @@ export type ZoomMeeting = {
   created_at: string;
   start_url: string;
   join_url: string;
+  password: string;
 } & ZoomMeetingRequest;
 
 export type ZoomerMeeting = ZoomerProps & ZoomMeeting;
+
+export type ZoomUser = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  type: string;
+  host_key: string;
+};

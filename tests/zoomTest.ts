@@ -40,12 +40,8 @@ const meetingReq = meetingReq2;
 const user = 'angel.campbell@cogef.org';
 
 export const zoomTest = async () => {
-  scheduleMeeting(user, meetingReq).then(([err, data]) => {
-    if (err) {
-      console.error({ err });
-    } else {
-      console.log({ data });
-    }
+  scheduleMeeting(user, meetingReq).then(meeting => {
+    console.log({ meeting });
   });
   //getMe().then(({ err, data }) => {
   //  if (err) {

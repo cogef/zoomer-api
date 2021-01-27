@@ -4,7 +4,7 @@ import { User } from '../../../../utils/auth';
 import * as Calendar from '../../../../utils/calendar';
 import * as DB from '../../../../utils/db';
 import * as Zoom from '../../../../utils/zoom';
-import { HandlerResponse } from '../../../utils/';
+import { HandlerResponse } from '../../../helpers';
 
 export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRequest): Promise<HandlerResponse> => {
   const startDT = meetingReq.start_time;
@@ -21,6 +21,7 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
 
   if (account) {
     const meeting = await Zoom.scheduleMeeting(account.email, meetingReq);
+    const { host_key: hostKey } = await Zoom.getUser(account.email)!;
     const hostJoinKey = generateKey();
 
     const eventDesc =
@@ -28,7 +29,11 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
       `-------------------------------\n\n` +
       `${meetingReq.agenda}\n\n` +
       `-------------------------------\n` +
-      `Scheduled by ${user.email} on ${account.email}`;
+      `Scheduled by ${user.email} on ${account.email}` +
+      `Meeting ID: ${meeting.id}` +
+      `Password: ${meeting.password}` +
+      `Host Key: ${hostKey}` +
+      `Zoomer Host Join Key: ${hostJoinKey}`;
 
     const eventReq = {
       title: meetingReq.topic,
@@ -48,7 +53,7 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
       description: meetingReq.agenda,
       startDate: new Date(startDT),
       endDate: new Date(endDT),
-      meetingID: meeting.id,
+      meetingID: String(meeting.id),
       hostJoinKey,
       host: {
         name: user.displayName!,
@@ -70,9 +75,7 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
 
 const generateKey = () => {
   return randomString.generate({
-    length: 5,
-    charset: 'alphabetic',
-    capitalization: 'lowercase',
-    readable: true,
+    length: 4,
+    charset: 'numeric',
   });
 };

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { validateUser, initializeGAPIs } from '../../middleware';
-import { handleResponse } from '../../utils';
+import { handleResponse } from '../../helpers';
 import { createMeeting, deleteMeeting, getMeeting } from './handlers';
 import { getStartURL } from './handlers/getStartURL';
 
@@ -10,8 +10,7 @@ export const MeetingsRouter = router;
 
 router.post('/:id/start_url', (req, res) => {
   const { params } = req;
-  const body = JSON.parse(req.body);
-  const handler = () => getStartURL(params.id, body.hostJoinKey);
+  const handler = () => getStartURL(params.id, req.body.hostJoinKey);
   handleResponse(res, handler);
 });
 
@@ -25,8 +24,7 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const body = JSON.parse(req.body);
-  const handler = () => createMeeting(req.user!, body);
+  const handler = () => createMeeting(req.user!, req.body);
   handleResponse(res, handler);
 });
 

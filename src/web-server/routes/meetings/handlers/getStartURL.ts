@@ -1,6 +1,6 @@
 import * as DB from '../../../../utils/db';
 import * as Zoom from '../../../../utils/zoom';
-import { HandlerResponse } from '../../../utils';
+import { HandlerResponse } from '../../../helpers';
 
 export const getStartURL = async (meetingID: string, hostJoinKey: string): Promise<HandlerResponse> => {
   const event = await DB.getEvent(meetingID);
