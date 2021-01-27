@@ -5,22 +5,33 @@ import { ZoomMeetingRequest } from '../zoom';
  * required by Google's Calendar API
  *
  * http://tools.ietf.org/html/rfc5545#section-3.8.5 */
-export const zoomToRFCRecurrence = (recur: Recurrence): string => {
+export const zoomToRFCRecurrence = (recur: Recurrence, dtStart?: string): string => {
   const rfcEnd = recur.end_times === undefined ? rfcEndDate(recur.end_date_time) : rfcOccurrences(recur.end_times);
   const options = [rfcFreq(recur.type), rfcInterval(recur.repeat_interval), rfcEnd];
   const isMonthyByDay = 'monthly_day' in recur;
+  let rrule = '';
+
+  if (dtStart) {
+    rrule += rfcStartDate(dtStart) + '\n';
+  }
+
+  rrule += 'RRULE:';
 
   switch (recur.type) {
     case 1: // daily
-      return options.join(';');
+      rrule += options.join(';');
+      break;
     case 2: // weekly
-      return [...options, rfcByWkDays(recur.weekly_days)].join(';');
+      rrule += [...options, rfcByWkDays(recur.weekly_days)].join(';');
+      break;
     case 3: // monthly
       const rfcMonthly = isMonthyByDay
         ? rfcByMnthDay(recur.monthly_day)
         : rfcMnthByWkDay(recur.monthly_week, recur.monthly_week_day);
-      return [...options, rfcMonthly].join(';');
+      rrule += [...options, rfcMonthly].join(';');
   }
+
+  return rrule;
 };
 
 const rfcFreq = (freq: Recurrence['type']) => {
@@ -37,7 +48,7 @@ const rfcInterval = (interval: Recurrence['repeat_interval']) => {
 };
 
 const rfcEndDate = (date: Recurrence['end_date_time']) => {
-  return `UNTIL=${date}`.replace('.000', '').replace(/[-:]/g, '');
+  return `UNTIL=${formatRfcDate(date!)}`;
 };
 
 const rfcOccurrences = (occurs: Recurrence['end_times']) => {
@@ -61,6 +72,14 @@ const rfcMnthByWkDay = (wkNum: Recurrence['monthly_week'], wkDay: Recurrence['mo
 
 const rfcByMnthDay = (day: Recurrence['monthly_day']) => {
   return `BYMONTHDAY=${day}`;
+};
+
+const rfcStartDate = (date: string) => {
+  return `DTSTART:${formatRfcDate(date)}`;
+};
+
+const formatRfcDate = (date: string) => {
+  return date.replace('.000', '').replace(/[-:]/g, '');
 };
 
 const weekDays = ['_', 'SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];

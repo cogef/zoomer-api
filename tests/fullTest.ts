@@ -50,10 +50,11 @@ const meetingReq = meetingReq2;
 
 export const fullTest = async () => {
   await initGAPIs();
+  // The user requesting the meeting
   const user = await auth.getUser('eVgwiI6fgkVxMNXTtYuABmOgt7s2');
   try {
     //const res = await createMeeting(user, meetingReq);
-    const res = await getMeeting(user, '94128772535');
+    const res = await getMeeting(user, '99165313619');
     //const res = await deleteMeeting(user, '94233423438');
     if (res.success) {
       console.log(util.inspect({ data: res.data }, false, 10));

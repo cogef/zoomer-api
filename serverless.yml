@@ -11,9 +11,6 @@ plugins:
   - serverless-plugin-typescript
   - serverless-dotenv-plugin
 
-custom:
-  firebaseName: zoomer-300722
-
 provider:
   name: aws
   runtime: nodejs12.x
@@ -43,12 +40,6 @@ provider:
       allowedMethods: '*'
       allowCredentials: false
       maxAge: 6000 # In seconds
-    authorizers:
-      zoomerJwtAuthorizer:
-        identitySource: $request.header.Authorization
-        issuerUrl: https://securetoken.google.com/${self:custom.firebaseName}
-        audience:
-          - ${self:custom.firebaseName}
 
 functions:
   api:
@@ -57,8 +48,3 @@ functions:
       - httpApi:
           path: '*'
           method: '*'
-          authorizer:
-            name: zoomerJwtAuthorizer
-      - httpApi:
-          path: /{proxy+}
-          method: 'OPTIONS'

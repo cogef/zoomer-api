@@ -4,6 +4,7 @@ import * as Calendar from '../../../../utils/calendar';
 import * as DB from '../../../../utils/db';
 import * as Zoom from '../../../../utils/zoom';
 import { HandlerResponse } from '../../../utils';
+import { isAuthorized } from '../utils';
 
 export const updateMeeting = async (
   user: User,
@@ -15,6 +16,10 @@ export const updateMeeting = async (
     return { success: false, error: 'meeting not found in db', code: 404 };
   }
 
+  if (!isAuthorized(dbEvent, user)) {
+    return { success: false, error: 'not authorized to access meeting', code: 401 };
+  }
+
   const zoomAcc = await DB.getZoomAccount(dbEvent.zoomAccount);
 
   //TODO: Change create logic to update logic
@@ -24,9 +29,11 @@ export const updateMeeting = async (
   const accounts = await DB.getZoomAccounts();
 
   const hourBefore = addHours(new Date(startDT), -1).toISOString();
-  const hourAfter = addHours(new Date(startDT), 1).toISOString();
+  const bufferDuration = meetingReq.duration + 120; // buffer duration includes hour before and after
 
-  const freeIdx = await Calendar.findFirstFree(hourBefore, hourAfter, accounts);
+  const rrule = meetingReq.recurrence ? Calendar.zoomToRFCRecurrence(meetingReq.recurrence, hourBefore) : undefined;
+
+  const freeIdx = await Calendar.findFirstFree(hourBefore, bufferDuration, accounts, rrule);
   const account = accounts[freeIdx];
 
   if (account) {
@@ -53,6 +60,7 @@ export const updateMeeting = async (
       startDate: new Date(startDT),
       endDate: new Date(endDT),
       meetingID: meeting.id,
+      hostJoinKey: dbEvent.hostJoinKey,
       host: {
         name: user.displayName!,
         email: user.email!,

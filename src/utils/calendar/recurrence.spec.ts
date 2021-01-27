@@ -7,7 +7,7 @@ describe('converting zoom recurrence into rfc rule', () => {
       repeat_interval: 5,
       end_times: 12,
     });
-    const expected = 'FREQ=DAILY;INTERVAL=5;COUNT=12';
+    const expected = 'RRULE:FREQ=DAILY;INTERVAL=5;COUNT=12';
     expect(actual).toBe(expected);
   });
 
@@ -15,9 +15,9 @@ describe('converting zoom recurrence into rfc rule', () => {
     const actual = zoomToRFCRecurrence({
       type: 1,
       repeat_interval: 5,
-      end_date_time: new Date('4/28/2021').toISOString(),
+      end_date_time: new Date('4/28/2021 GMT-4').toISOString(),
     });
-    const expected = 'FREQ=DAILY;INTERVAL=5;UNTIL=20210428T040000Z';
+    const expected = 'RRULE:FREQ=DAILY;INTERVAL=5;UNTIL=20210428T040000Z';
     expect(actual).toBe(expected);
   });
 
@@ -26,9 +26,9 @@ describe('converting zoom recurrence into rfc rule', () => {
       type: 2,
       repeat_interval: 2,
       weekly_days: '1,4,7',
-      end_date_time: new Date('1/12/2021').toISOString(),
+      end_date_time: new Date('1/12/2021 GMT-5').toISOString(),
     });
-    const expected = 'FREQ=WEEKLY;INTERVAL=2;UNTIL=20210112T050000Z;BYDAY=SU,WE,SA';
+    const expected = 'RRULE:FREQ=WEEKLY;INTERVAL=2;UNTIL=20210112T050000Z;BYDAY=SU,WE,SA';
     expect(actual).toBe(expected);
   });
 
@@ -40,7 +40,7 @@ describe('converting zoom recurrence into rfc rule', () => {
       monthly_week_day: 3,
       end_times: 30,
     });
-    const expected = 'FREQ=MONTHLY;INTERVAL=3;COUNT=30;BYDAY=-1TU';
+    const expected = 'RRULE:FREQ=MONTHLY;INTERVAL=3;COUNT=30;BYDAY=-1TU';
     expect(actual).toBe(expected);
   });
 
@@ -52,7 +52,7 @@ describe('converting zoom recurrence into rfc rule', () => {
       monthly_week_day: 4,
       end_times: 30,
     });
-    const expected = 'FREQ=MONTHLY;INTERVAL=3;COUNT=30;BYDAY=2WE';
+    const expected = 'RRULE:FREQ=MONTHLY;INTERVAL=3;COUNT=30;BYDAY=2WE';
     expect(actual).toBe(expected);
   });
 
@@ -61,9 +61,23 @@ describe('converting zoom recurrence into rfc rule', () => {
       type: 3,
       repeat_interval: 11,
       monthly_day: 24,
-      end_date_time: new Date('3/14/2025 3:30 PM').toISOString(),
+      end_date_time: new Date('3/14/2025 3:30 PM GMT-4').toISOString(),
     });
-    const expected = 'FREQ=MONTHLY;INTERVAL=11;UNTIL=20250314T193000Z;BYMONTHDAY=24';
+    const expected = 'RRULE:FREQ=MONTHLY;INTERVAL=11;UNTIL=20250314T193000Z;BYMONTHDAY=24';
+    expect(actual).toBe(expected);
+  });
+
+  test('monthly recurrence, by date with start date', () => {
+    const actual = zoomToRFCRecurrence(
+      {
+        type: 3,
+        repeat_interval: 11,
+        monthly_day: 24,
+        end_date_time: new Date('3/14/2025 3:30 PM GMT-4').toISOString(),
+      },
+      new Date('1/27/2021 12:00 AM GMT-5').toISOString()
+    );
+    const expected = 'DTSTART:20210127T050000Z\nRRULE:FREQ=MONTHLY;INTERVAL=11;UNTIL=20250314T193000Z;BYMONTHDAY=24';
     expect(actual).toBe(expected);
   });
 });
