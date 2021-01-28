@@ -1,4 +1,5 @@
 export * from './createMeeting';
 export * from './getMeeting';
-export * from './updateMeeting';
+//export * from './updateMeeting';
 export * from './deleteMeeting';
+export * from './getOccurrences';
