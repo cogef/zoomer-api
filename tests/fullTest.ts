@@ -1,9 +1,9 @@
 import { auth } from '../src/services/firebase';
 import { initGAPIs } from '../src/services/googleapis';
 import { ZoomerMeetingRequest } from '../src/utils/zoom/types';
-import { getMeeting } from '../src/web-server/routes/meetings/handlers';
-import { createMeeting } from '../src/web-server/routes/meetings/handlers/createMeeting';
-import { deleteMeeting } from '../src/web-server/routes/meetings/handlers/deleteMeeting';
+import { getMeeting } from '../src/handlers/api/routes/meetings/handlers';
+import { createMeeting } from '../src/handlers/api/routes/meetings/handlers/createMeeting';
+import { deleteMeeting } from '../src/handlers/api/routes/meetings/handlers/deleteMeeting';
 import util from 'util';
 
 const meetingReq1: ZoomerMeetingRequest = {

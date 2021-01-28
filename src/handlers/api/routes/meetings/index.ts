@@ -10,11 +10,18 @@ export const MeetingsRouter = router;
 
 router.post('/:id/start_url', (req, res) => {
   const { params } = req;
-  const handler = () => getStartURL(params.id, req.body.hostJoinKey);
+  const handler = () => getStartURL(params.id, { hostJoinKey: params.hostJoinKey });
   handleResponse(res, handler);
 });
 
 router.use(validateUser);
+
+router.get('/:id/start_url', (req, res) => {
+  const { params } = req;
+  const handler = () => getStartURL(params.id, { user: req.user! });
+  handleResponse(res, handler);
+});
+
 router.use(initializeGAPIs);
 
 router.get('/:id', (req, res) => {
