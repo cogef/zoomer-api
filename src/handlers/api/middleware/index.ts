@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
-import { initGAPIs } from '../../services/googleapis';
-import { getUserFromToken } from '../../utils/auth';
+import { initGAPIs } from '../../../services/googleapis';
+import { getUserFromToken } from '../../../utils/auth';
 
 export const initializeGAPIs: RequestHandler = async (req, res, next) => {
   await initGAPIs();

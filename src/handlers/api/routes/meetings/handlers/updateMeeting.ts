@@ -1,8 +1,8 @@
 import { addHours, addMinutes } from 'date-fns';
-import { User } from '../../../../utils/auth';
-import * as Calendar from '../../../../utils/calendar';
-import * as DB from '../../../../utils/db';
-import * as Zoom from '../../../../utils/zoom';
+import { User } from '../../../../../utils/auth';
+import * as Calendar from '../../../../../utils/calendar';
+import * as DB from '../../../../../utils/db';
+import * as Zoom from '../../../../../utils/zoom';
 import { HandlerResponse } from '../../../helpers';
 import { isAuthorized } from '../helpers';
 
@@ -53,24 +53,37 @@ export const updateMeeting = async (
     //const [leaderCalErr, leaderCalEventID] = await createEvent(freeCal, eventReq);
     const leaderCalEventID = '~' + Math.random();
 
-    await DB.storeEvent({
-      zoomAccount: account.email,
-      title: meetingReq.topic,
-      description: meetingReq.agenda,
-      startDate: new Date(startDT),
-      endDate: new Date(endDT),
-      meetingID: String(meeting.id),
-      hostJoinKey: dbEvent.hostJoinKey,
-      host: {
-        name: user.displayName!,
-        email: user.email!,
-        ministry: meetingReq.ministry,
+    const occurrences = meeting.occurrences || [
+      {
+        occurance_id: String(meeting.id),
+        start_time: meeting.start_time,
+        duration: meeting.duration,
+        status: '',
+        isSeudo: true as const,
       },
-      calendarEvents: {
-        zoomEventID: zoomCalEventID!,
-        leadershipEventID: leaderCalEventID!,
+    ];
+
+    await DB.storeEvent(
+      {
+        zoomAccount: account.email,
+        title: meetingReq.topic,
+        description: meetingReq.agenda,
+        startDate: new Date(startDT),
+        endDate: new Date(endDT),
+        meetingID: String(meeting.id),
+        hostJoinKey: dbEvent.hostJoinKey,
+        host: {
+          name: user.displayName!,
+          email: user.email!,
+          ministry: meetingReq.ministry,
+        },
+        calendarEvents: {
+          zoomEventID: zoomCalEventID!,
+          leadershipEventID: leaderCalEventID!,
+        },
       },
-    });
+      occurrences
+    );
 
     return { success: true, data: { meetingID: meeting.id } };
   }

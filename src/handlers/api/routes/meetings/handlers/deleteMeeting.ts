@@ -1,7 +1,7 @@
-import { User } from '../../../../utils/auth';
-import * as Calendar from '../../../../utils/calendar';
-import * as DB from '../../../../utils/db';
-import * as Zoom from '../../../../utils/zoom';
+import { User } from '../../../../../utils/auth';
+import * as Calendar from '../../../../../utils/calendar';
+import * as DB from '../../../../../utils/db';
+import * as Zoom from '../../../../../utils/zoom';
 import { HandlerResponse } from '../../../helpers';
 import { isAuthorized } from '../helpers';
 

@@ -55,9 +55,17 @@ export type ZoomMeeting = {
   start_url: string;
   join_url: string;
   password: string;
+  occurrences?: MeetingOccurance[];
 } & ZoomMeetingRequest;
 
 export type ZoomerMeeting = ZoomerProps & ZoomMeeting;
+
+export type MeetingOccurance = {
+  occurance_id: string;
+  start_time: string;
+  duration: number;
+  status: string;
+};
 
 export type ZoomUser = {
   id: string;
