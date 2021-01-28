@@ -1,4 +1,4 @@
-import { addMinutes } from 'date-fns/esm';
+import { addMinutes } from 'date-fns';
 import { db } from '../../services/firebase';
 import { EventInfo, StoredEvent } from './';
 import { OccurrenceInfo, StoredOccurrence, ZoomAccount } from './types';
