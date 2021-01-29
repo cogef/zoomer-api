@@ -8,8 +8,8 @@ import { rruleTest } from './rruleTest';
 import { zoomTest } from './zoomTest';
 
 // Tests
-fullTest();
-//rruleTest();
+//fullTest();
+rruleTest();
 //freebusyTest();
 //adminTest();
 //zoomTest();
