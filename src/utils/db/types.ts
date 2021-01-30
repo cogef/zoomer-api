@@ -18,6 +18,7 @@ export type EventInfo = {
     zoomEventID: string;
     leadershipEventID: string;
   };
+  reccurrence?: string;
 };
 
 export type StoredEvent = { createdAt: Date } & EventInfo;

@@ -46,8 +46,7 @@ const meetingReq2: ZoomerMeetingRequest = {
 const meetingReq = meetingReq2;
 
 export const rruleTest = () => {
-  const rruleStr = zoomToRFCRecurrence(meetingReq.recurrence!, meetingReq.start_time);
-  const rrule = rrulestr(rruleStr);
+  const rrule = zoomToRFCRecurrence(meetingReq.recurrence!, meetingReq.start_time);
   const dates = rrule.all();
   //console.log(util.inspect(dates, false, 3));
   console.log(rrule.toText());

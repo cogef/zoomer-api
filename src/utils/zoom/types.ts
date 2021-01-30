@@ -12,7 +12,7 @@ export type ZoomMeetingRequest = {
     repeat_interval: number;
     weekly_days?: string;
     monthly_day?: number;
-    monthly_week?: '-1' | 1 | 2 | 3 | 4;
+    monthly_week?: -1 | 1 | 2 | 3 | 4;
     monthly_week_day?: number;
     end_times?: number;
     end_date_time?: string; //  [date-time];

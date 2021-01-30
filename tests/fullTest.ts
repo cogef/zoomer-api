@@ -11,7 +11,7 @@ const meetingReq1: ZoomerMeetingRequest = {
   duration: 180,
   ministry: 'cap',
   password: '3241',
-  recurrence: { type: 2, repeat_interval: 1, weekly_days: '1,4,7', end_times: 6 },
+  recurrence: { type: 2, repeat_interval: 1, weekly_days: '5', end_times: 6 },
   settings: {
     host_video: false,
     participant_video: false,
@@ -19,8 +19,8 @@ const meetingReq1: ZoomerMeetingRequest = {
     mute_upon_entry: true,
     waiting_room: false,
   },
-  start_time: '2021-01-24T22:00:00.000Z',
-  topic: 'Important Meeting',
+  start_time: new Date('2/5/2021 10:00 AM').toISOString(),
+  topic: 'Test Meeting Charlie',
   type: 8,
 };
 
@@ -42,19 +42,19 @@ const meetingReq2: ZoomerMeetingRequest = {
     waiting_room: false,
   },
   start_time: '2021-01-24T23:30:00.000Z',
-  topic: 'Important Meeting',
+  topic: 'Test Meeting Delta',
   type: 8,
 };
 
-const meetingReq = meetingReq2;
+const meetingReq = meetingReq1;
 
 export const fullTest = async () => {
   await initGAPIs();
   // The user requesting the meeting
   const user = await auth.getUser('eVgwiI6fgkVxMNXTtYuABmOgt7s2');
   try {
-    //const res = await createMeeting(user, meetingReq);
-    const res = await getMeeting(user, '99165313619');
+    const res = await createMeeting(user, meetingReq);
+    //const res = await getMeeting(user, '99165313619');
     //const res = await deleteMeeting(user, '94233423438');
     if (res.success) {
       console.log(util.inspect({ data: res.data }, false, 10));
