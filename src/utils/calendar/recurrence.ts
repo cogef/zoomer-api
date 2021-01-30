@@ -79,7 +79,7 @@ const rfcStartDate = (date: string) => {
 };
 
 const formatRfcDate = (date: string) => {
-  return date.replace('.000', '').replace(/[-:]/g, '');
+  return date.replace(/\.\d\d\d/, '').replace(/[-:]/g, '');
 };
 
 const weekDays = ['_', 'SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
