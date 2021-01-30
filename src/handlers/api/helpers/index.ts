@@ -9,7 +9,8 @@ export const handleResponse = async (res: Response, handler: () => Promise<Handl
     res.status(result.code || 400).send({ error: result.error });
     console.info({ CAUGHT_ERROR: result.error });
   } catch (err) {
-    res.status(500).send({ error: err });
+    const error = err instanceof Error ? err.message : err;
+    res.status(500).send({ error });
     console.error({ UNCAUGHT_ERROR: err });
   }
 };
