@@ -49,7 +49,7 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
 
     const occurrences = meeting.occurrences || [
       {
-        occurance_id: String(meeting.id),
+        occurrence_id: String(meeting.id),
         start_time: meeting.start_time,
         duration: meeting.duration,
         status: '',

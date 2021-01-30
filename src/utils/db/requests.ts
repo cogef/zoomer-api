@@ -15,10 +15,10 @@ export const storeEvent = async (event: EventInfo, occurs: OccurrenceInfo[]) => 
   occurs.forEach(occur => {
     const startDate = new Date(occur.start_time);
     const endDate = addMinutes(startDate, occur.duration);
-    const occRef = meetingRef.collection('occurrences').doc(occur.occurance_id);
+    const occRef = meetingRef.collection('occurrences').doc(occur.occurrence_id);
 
     batch.create(occRef, {
-      occuranceID: occur.occurance_id,
+      occurrenceID: occur.occurrence_id,
       startDate,
       endDate,
       status: occur.status,

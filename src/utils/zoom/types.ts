@@ -61,7 +61,7 @@ export type ZoomMeeting = {
 export type ZoomerMeeting = ZoomerProps & ZoomMeeting;
 
 export type MeetingOccurance = {
-  occurance_id: string;
+  occurrence_id: string;
   start_time: string;
   duration: number;
   status: string;
