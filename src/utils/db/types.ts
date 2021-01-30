@@ -25,7 +25,7 @@ export type StoredEvent = { createdAt: Date } & EventInfo;
 export type OccurrenceInfo = { isSeudo?: true } & MeetingOccurance;
 
 export type StoredOccurrence = {
-  occuranceID: string;
+  occurrenceID: string;
   meetingID: string;
   startDate: firestore.Timestamp | Date;
   endDate: firestore.Timestamp | Date;
