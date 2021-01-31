@@ -16,7 +16,7 @@ export const getMeeting = async (user: User, meetingID: string): Promise<Handler
     return { success: false, error: 'meeting not found', code: 404 };
   }
 
-  if (!isAuthorized(event, user)) {
+  if (!isAuthorized(event.host.email, user.email!)) {
     return { success: false, error: 'not authorized to access meeting', code: 401 };
   }
 

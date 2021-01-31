@@ -1,7 +1,7 @@
 import { auth } from '../src/services/firebase';
 import { initGAPIs } from '../src/services/googleapis';
 import { ZoomerMeetingRequest } from '../src/utils/zoom/types';
-import { getMeeting } from '../src/handlers/api/routes/meetings/handlers';
+import { getMeeting, getOccurrences } from '../src/handlers/api/routes/meetings/handlers';
 import { createMeeting } from '../src/handlers/api/routes/meetings/handlers/createMeeting';
 import { deleteMeeting } from '../src/handlers/api/routes/meetings/handlers/deleteMeeting';
 import util from 'util';
@@ -53,9 +53,10 @@ export const fullTest = async () => {
   // The user requesting the meeting
   const user = await auth.getUser('eVgwiI6fgkVxMNXTtYuABmOgt7s2');
   try {
-    const res = await createMeeting(user, meetingReq);
+    //const res = await createMeeting(user, meetingReq);
     //const res = await getMeeting(user, '99165313619');
     //const res = await deleteMeeting(user, '94233423438');
+    const res = await getOccurrences(user, 'angel.campbell@cogef.org');
     if (res.success) {
       console.log(util.inspect({ data: res.data }, false, 10));
     } else {

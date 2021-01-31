@@ -1,10 +1,8 @@
-import { User } from '../../../../../utils/auth';
-import { StoredEvent } from '../../../../../utils/db';
 import { getUserGroups } from '../../../../../utils/directory';
 
-export const isAuthorized = async (event: StoredEvent, user: User) => {
-  if (event.host.email === user.email) return true;
+export const isAuthorized = async (hostEmail: string, userEmail: string) => {
+  if (hostEmail === userEmail) return true;
 
-  const groups = await getUserGroups(user);
+  const groups = await getUserGroups(userEmail);
   return groups.includes('zoom.admins@cogef.org');
 };

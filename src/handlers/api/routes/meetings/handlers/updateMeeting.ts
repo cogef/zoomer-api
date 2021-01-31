@@ -16,7 +16,7 @@ export const updateMeeting = async (
     return { success: false, error: 'meeting not found in db', code: 404 };
   }
 
-  if (!isAuthorized(dbEvent, user)) {
+  if (!isAuthorized(dbEvent.host.email, user.email!)) {
     return { success: false, error: 'not authorized to access meeting', code: 401 };
   }
 
