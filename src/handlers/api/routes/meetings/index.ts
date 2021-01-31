@@ -26,7 +26,7 @@ router.use(initializeGAPIs);
 
 router.get('/', (req, res) => {
   const { params } = req;
-  if (params.asOccurrences) {
+  if (params.as === 'occurrences') {
     const handler = () => getOccurrences(req.user!, params.hostEmail);
     handleResponse(res, handler);
   } else {
