@@ -10,6 +10,7 @@
     "lib": ["ESNext"],
     "rootDir": "./",
     "esModuleInterop": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "downlevelIteration": true
   }
 }

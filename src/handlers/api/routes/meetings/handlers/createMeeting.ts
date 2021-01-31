@@ -63,7 +63,7 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
     //const [leaderCalErr, leaderCalEventID] = await createEvent(leaderCal, eventReq);
     const leaderCalEventID = '~' + Math.random();
 
-    await DB.storeEvent(
+    await DB.storeMeeting(
       {
         zoomAccount: account.email,
         title: meetingReq.topic,

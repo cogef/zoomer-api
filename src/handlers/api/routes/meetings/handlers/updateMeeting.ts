@@ -11,7 +11,7 @@ export const updateMeeting = async (
   meetingID: string,
   meetingReq: Zoom.ZoomerMeetingRequest
 ): Promise<HandlerResponse> => {
-  const dbEvent = await DB.getEvent(meetingID);
+  const dbEvent = await DB.getMeeting(meetingID);
   if (!dbEvent) {
     return { success: false, error: 'meeting not found in db', code: 404 };
   }

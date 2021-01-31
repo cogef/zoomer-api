@@ -5,7 +5,7 @@ import { HandlerResponse } from '../../../helpers';
 import { isAuthorized } from '../helpers';
 
 export const getMeeting = async (user: User, meetingID: string): Promise<HandlerResponse> => {
-  const event = await DB.getEvent(meetingID);
+  const event = await DB.getMeeting(meetingID);
   if (!event) {
     return { success: false, error: 'meeting not found in db', code: 404 };
   }

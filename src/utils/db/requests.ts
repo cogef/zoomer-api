@@ -4,7 +4,7 @@ import { db } from '../../services/firebase';
 import { MeetingInfo, StoredMeeting } from './';
 import { OccurrenceInfo, StoredOccurrence, ZoomAccount } from './types';
 
-export const storeEvent = async (event: MeetingInfo, occurs: OccurrenceInfo[]) => {
+export const storeMeeting = async (event: MeetingInfo, occurs: OccurrenceInfo[]) => {
   const batch = db.batch();
   const meetingRef = db.doc(`meetings/${event.meetingID}`);
 
@@ -17,7 +17,7 @@ export const storeEvent = async (event: MeetingInfo, occurs: OccurrenceInfo[]) =
 
   batch.create(meetingRef, meeting);
 
-  occurs.forEach(occur => {
+  occurs.forEach((occur, idx) => {
     const startDate = new Date(occur.start_time);
     const endDate = addMinutes(startDate, occur.duration);
     const occRef = meetingRef.collection('occurrences').doc(occur.occurrence_id);
@@ -29,6 +29,8 @@ export const storeEvent = async (event: MeetingInfo, occurs: OccurrenceInfo[]) =
       meetingID: event.meetingID,
       hostEmail: event.host.email,
       isSeudo: Boolean(occur.isSeudo),
+      sequence: idx + 1,
+      totalOccurrences: occurs.length,
     };
 
     batch.create(occRef, occurrence);
@@ -37,7 +39,7 @@ export const storeEvent = async (event: MeetingInfo, occurs: OccurrenceInfo[]) =
   await batch.commit();
 };
 
-export const getEvent = async (meetingID: string) => {
+export const getMeeting = async (meetingID: string) => {
   return (await db.doc(`meetings/${meetingID}`).get()).data() as StoredMeeting | undefined;
 };
 
