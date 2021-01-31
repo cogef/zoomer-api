@@ -15,7 +15,7 @@ const meetingReq1: ZoomerMeetingRequest = {
     waiting_room: false,
   },
   start_time: '2021-01-24T22:00:00.000Z',
-  topic: 'Important Meeting',
+  topic: 'Test Meeting Charlie',
   type: 8,
 };
 
@@ -32,12 +32,12 @@ const meetingReq2: ZoomerMeetingRequest = {
     waiting_room: false,
   },
   start_time: '2021-01-24T23:30:00.000Z',
-  topic: 'Important Meeting',
+  topic: 'Test Meeting Delta',
   type: 2,
 };
 
-const meetingReq = meetingReq2;
-const user = 'angel.campbell@cogef.org';
+const meetingReq = meetingReq1;
+const user = 'familylifechairs@cogef.org';
 
 export const zoomTest = async () => {
   scheduleMeeting(user, meetingReq).then(meeting => {

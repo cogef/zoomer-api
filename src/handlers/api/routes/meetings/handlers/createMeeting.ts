@@ -14,9 +14,11 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
   const hourBefore = addHours(new Date(startDT), -1).toISOString();
   const bufferDuration = meetingReq.duration + 120; // buffer duration includes hour before and after
 
-  const rrule = meetingReq.recurrence ? Calendar.zoomToRFCRecurrence(meetingReq.recurrence, hourBefore) : undefined;
+  const occursRrule = meetingReq.recurrence
+    ? Calendar.zoomToRFCRecurrence(meetingReq.recurrence, hourBefore)
+    : undefined;
 
-  const freeIdx = await Calendar.findFirstFree(hourBefore, bufferDuration, accounts, rrule);
+  const freeIdx = await Calendar.findFirstFree(hourBefore, bufferDuration, accounts, occursRrule?.toString());
   const account = accounts[freeIdx];
 
   if (account) {
@@ -35,17 +37,7 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
       `Host Key: ${hostKey}\n` +
       `Zoomer Host Join Key: ${hostJoinKey}\n`;
 
-    const eventReq = {
-      title: meetingReq.topic,
-      description: eventDesc,
-      start: startDT,
-      end: endDT,
-      recurrence: meetingReq.recurrence ? Calendar.zoomToRFCRecurrence(meetingReq.recurrence) : undefined,
-    };
-
-    const zoomCalEventID = await Calendar.createEvent(account.calendarID, eventReq);
-    //const [leaderCalErr, leaderCalEventID] = await createEvent(leaderCal, eventReq);
-    const leaderCalEventID = '~' + Math.random();
+    const rrule = meetingReq.recurrence ? Calendar.zoomToRFCRecurrence(meetingReq.recurrence) : undefined;
 
     const occurrences = meeting.occurrences || [
       {
@@ -56,6 +48,20 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
         isSeudo: true as const,
       },
     ];
+
+    // actual start time might not fall into reccurrence
+    const firstOccur = occurrences[0].start_time;
+    const eventReq = {
+      title: meetingReq.topic,
+      description: eventDesc,
+      start: firstOccur,
+      end: addMinutes(new Date(firstOccur), meetingReq.duration).toISOString(),
+      recurrence: rrule?.toString(),
+    };
+
+    const zoomCalEventID = await Calendar.createEvent(account.calendarID, eventReq);
+    //const [leaderCalErr, leaderCalEventID] = await createEvent(leaderCal, eventReq);
+    const leaderCalEventID = '~' + Math.random();
 
     await DB.storeEvent(
       {
@@ -75,6 +81,7 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
           zoomEventID: zoomCalEventID!,
           leadershipEventID: leaderCalEventID!,
         },
+        reccurrence: rrule?.toText(),
       },
       occurrences
     );

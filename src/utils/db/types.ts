@@ -1,7 +1,7 @@
 import { firestore } from 'firebase-admin';
 import { MeetingOccurance } from '../zoom';
 
-export type EventInfo = {
+export type MeetingInfo = {
   zoomAccount: string;
   title: string;
   description: string;
@@ -18,17 +18,23 @@ export type EventInfo = {
     zoomEventID: string;
     leadershipEventID: string;
   };
+  reccurrence?: string;
 };
 
-export type StoredEvent = { createdAt: Date } & EventInfo;
+export type StoredMeeting = {
+  createdAt: firestore.Timestamp;
+  startDate: firestore.Timestamp;
+  endDate: firestore.Timestamp;
+} & Omit<MeetingInfo, 'startDate' | 'endDate'>;
 
 export type OccurrenceInfo = { isSeudo?: true } & MeetingOccurance;
 
 export type StoredOccurrence = {
   occurrenceID: string;
   meetingID: string;
-  startDate: firestore.Timestamp | Date;
-  endDate: firestore.Timestamp | Date;
+  startDate: firestore.Timestamp;
+  endDate: firestore.Timestamp;
+  hostEmail: string;
   isSeudo: boolean;
 };
 

@@ -15,7 +15,7 @@ export const getStartURL = async (meetingID: string, opts: Options): Promise<Han
       return { success: false, error: 'incorrect host join key', code: 401 };
     }
   } else {
-    if (!isAuthorized(event, opts.user)) {
+    if (!isAuthorized(event.host.email, opts.user.email!)) {
       return { success: false, error: 'not authorized', code: 401 };
     }
   }

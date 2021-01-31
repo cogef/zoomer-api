@@ -15,14 +15,16 @@ export const handleResponse = async (res: Response, handler: () => Promise<Handl
   }
 };
 
-export type HandlerResponse =
-  | {
-      success: true;
-      data: Record<any, any>;
-      code?: number;
-    }
-  | {
-      success: false;
-      error: string;
-      code?: number;
-    };
+export type HandlerResponse = HandlerSuccessResponse | HandlerErrorResponse;
+
+export type HandlerSuccessResponse = {
+  success: true;
+  data: Record<any, any>;
+  code?: number;
+};
+
+export type HandlerErrorResponse = {
+  success: false;
+  error: string;
+  code?: number;
+};

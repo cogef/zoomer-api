@@ -11,7 +11,7 @@ export const deleteMeeting = async (user: User, meetingID: string): Promise<Hand
     return { success: false, error: 'meeting not found in db', code: 404 };
   }
 
-  if (!isAuthorized(dbEvent, user)) {
+  if (!isAuthorized(dbEvent.host.email, user.email!)) {
     return { success: false, error: 'not authorized to access meeting', code: 401 };
   }
 

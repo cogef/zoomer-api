@@ -29,6 +29,6 @@ export const freebusyTest = async () => {
 
   const accounts = await getZoomAccounts();
   const rrule = zoomToRFCRecurrence(meetingReq.recurrence!, meetingReq.start_time);
-  const freeIdx = await findFirstFree(meetingReq.start_time, meetingReq.duration, accounts, rrule);
+  const freeIdx = await findFirstFree(meetingReq.start_time, meetingReq.duration, accounts, rrule.toString());
   console.log({ freeAccount: accounts[freeIdx] });
 };

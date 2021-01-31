@@ -1,9 +1,9 @@
 import { admin } from '../../services/googleapis';
 import { User } from '../auth';
 
-export const getUserGroups = async (user: User) => {
+export const getUserGroups = async (userEmail: string) => {
   const { data } = await admin.groups.list({
-    userKey: user.email,
+    userKey: userEmail,
   });
 
   return data.groups!.map(g => g.email!);

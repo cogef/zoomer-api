@@ -5,6 +5,6 @@ import { getUserGroups } from '../src/utils/directory';
 export const adminTest = async () => {
   await initGAPIs();
   const user = await auth.getUser('eVgwiI6fgkVxMNXTtYuABmOgt7s2');
-  const groups = await getUserGroups(user);
+  const groups = await getUserGroups(user.email!);
   console.log({ groups });
 };
