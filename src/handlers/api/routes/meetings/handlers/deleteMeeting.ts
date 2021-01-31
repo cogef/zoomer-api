@@ -6,7 +6,7 @@ import { HandlerResponse } from '../../../helpers';
 import { isAuthorized } from '../helpers';
 
 export const deleteMeeting = async (user: User, meetingID: string): Promise<HandlerResponse> => {
-  const dbEvent = await DB.getEvent(meetingID);
+  const dbEvent = await DB.getMeeting(meetingID);
   if (!dbEvent) {
     return { success: false, error: 'meeting not found in db', code: 404 };
   }

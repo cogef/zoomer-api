@@ -1,5 +1,5 @@
 import { User } from '../../../../../utils/auth';
-import { StoredOccurrence } from '../../../../../utils/db';
+import { StoredMeeting, StoredOccurrence } from '../../../../../utils/db';
 import { HandlerResponse } from '../../../helpers';
 import { isAuthorized } from '../helpers';
 import * as DB from '../../../../../utils/db';
@@ -10,11 +10,26 @@ export const getOccurrences = async (user: User, hostEmail: string): Promise<Han
   }
 
   const occurrences = await DB.getOccurrences(hostEmail);
-  const result = occurrences.map(occ => ({
-    ...occ,
-    startDate: occ.startDate.toMillis(),
-    endDate: occ.endDate.toMillis(),
-  }));
+  const meetingIDs = occurrences.reduce((acc, occ) => {
+    acc.add(occ.meetingID);
+    return acc;
+  }, new Set<string>());
+
+  const meetings = [...meetingIDs].reduce((acc, id) => {
+    acc[id] = DB.getMeeting(id);
+    return acc;
+  }, {} as Record<string, Promise<StoredMeeting | undefined>>);
+
+  const result = [];
+
+  for (let occ of occurrences) {
+    result.push({
+      ...occ,
+      startDate: occ.startDate.toMillis(),
+      endDate: occ.endDate.toMillis(),
+      title: (await meetings[occ.meetingID])!.title,
+    });
+  }
 
   return { success: true, data: result };
 };
