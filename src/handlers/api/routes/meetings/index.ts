@@ -25,9 +25,9 @@ router.get('/:id/start_url', (req, res) => {
 router.use(initializeGAPIs);
 
 router.get('/', (req, res) => {
-  const { params } = req;
-  if (params.as === 'occurrences') {
-    const handler = () => getOccurrences(req.user!, params.hostEmail);
+  const { query, user } = req;
+  if (query.as === 'occurrences') {
+    const handler = () => getOccurrences(req.user!, user!.email!);
     handleResponse(res, handler);
   } else {
     res.sendStatus(501); // Not Implemented (Get Meetings)

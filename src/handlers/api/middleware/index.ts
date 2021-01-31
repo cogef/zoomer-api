@@ -21,8 +21,10 @@ export const validateUser: RequestHandler = async (req, res, next) => {
 
 export const logRequest: RequestHandler = (req, res, next) => {
   console.debug({
-    path: req.path,
     method: req.method,
+    path: req.path,
+    params: req.params,
+    query: req.query,
   });
   next();
 };
