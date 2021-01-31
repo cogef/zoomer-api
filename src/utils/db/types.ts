@@ -36,6 +36,8 @@ export type StoredOccurrence = {
   endDate: firestore.Timestamp;
   hostEmail: string;
   isSeudo: boolean;
+  sequence: number;
+  totalOccurrences: number;
 };
 
 export type ZoomAccount = { calendarID: string; sequence: number; email: string };

@@ -17,7 +17,7 @@ export const storeMeeting = async (event: MeetingInfo, occurs: OccurrenceInfo[])
 
   batch.create(meetingRef, meeting);
 
-  occurs.forEach(occur => {
+  occurs.forEach((occur, idx) => {
     const startDate = new Date(occur.start_time);
     const endDate = addMinutes(startDate, occur.duration);
     const occRef = meetingRef.collection('occurrences').doc(occur.occurrence_id);
@@ -29,6 +29,8 @@ export const storeMeeting = async (event: MeetingInfo, occurs: OccurrenceInfo[])
       meetingID: event.meetingID,
       hostEmail: event.host.email,
       isSeudo: Boolean(occur.isSeudo),
+      sequence: idx + 1,
+      totalOccurrences: occurs.length,
     };
 
     batch.create(occRef, occurrence);
