@@ -20,12 +20,15 @@ export const getMeeting = async (user: User, meetingID: string): Promise<Handler
     return { success: false, error: 'meeting not found', code: 404 };
   }
 
-  const isReccurring = Boolean(meeting.recurrence);
-  const startTime = meeting.occurrences![0].start_time;
+  // Zoom doesn't supply start time nor duration for reccurring meetings
+  const firstOccur = meeting.occurrences?.[0];
+  const startTime = firstOccur?.start_time;
+  const duration = firstOccur?.duration;
 
   const zoomerMeeting: Zoom.ZoomerMeeting = {
     ...meeting,
-    start_time: isReccurring ? startTime : meeting.start_time,
+    start_time: startTime ? startTime : meeting.start_time,
+    duration: duration ? duration : meeting.duration,
     ministry: event.host.ministry,
   };
 
