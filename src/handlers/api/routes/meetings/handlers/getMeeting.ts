@@ -10,18 +10,22 @@ export const getMeeting = async (user: User, meetingID: string): Promise<Handler
     return { success: false, error: 'meeting not found in db', code: 404 };
   }
 
+  if (!isAuthorized(event.host.email, user.email!)) {
+    return { success: false, error: 'not authorized to access meeting', code: 401 };
+  }
+
   const meeting = await Zoom.getMeeting(meetingID);
 
   if (!meeting) {
     return { success: false, error: 'meeting not found', code: 404 };
   }
 
-  if (!isAuthorized(event.host.email, user.email!)) {
-    return { success: false, error: 'not authorized to access meeting', code: 401 };
-  }
+  const isReccurring = Boolean(meeting.recurrence);
+  const startTime = meeting.occurrences![0].start_time;
 
   const zoomerMeeting: Zoom.ZoomerMeeting = {
     ...meeting,
+    start_time: isReccurring ? startTime : meeting.start_time,
     ministry: event.host.ministry,
   };
 
