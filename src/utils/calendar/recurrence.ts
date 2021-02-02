@@ -1,5 +1,6 @@
 import { Frequency, Options, RRule, Weekday } from 'rrule';
 import { ZoomMeetingRequest } from '../zoom';
+import { DateTime } from 'luxon';
 
 /**
  * Convert Zoom recurrence properties into RFC5545 recurrence rules,
@@ -16,11 +17,11 @@ export const zoomToRFCRecurrence = (recur: Recurrence, dtStart?: string) => {
   };
 
   if (dtStart) {
-    rruleOpts.dtstart = new Date(dtStart);
+    rruleOpts.dtstart = rruleDate(dtStart);
   }
 
   if (recur.end_date_time) {
-    rruleOpts.until = new Date(recur.end_date_time);
+    rruleOpts.until = rruleDate(recur.end_date_time);
   } else {
     rruleOpts.count = recur.end_times;
   }
@@ -40,6 +41,11 @@ export const zoomToRFCRecurrence = (recur: Recurrence, dtStart?: string) => {
   return new RRule(rruleOpts);
 };
 
+/** Returns rrule occurrences as true UTC dates */
+export const allToUTC = (rrule: RRule) => {
+  return rrule.all().map(d => DateTime.fromJSDate(d).toUTC().setZone(timezone, { keepLocalTime: true }).toJSDate());
+};
+
 const rfcFreq: Record<Recurrence['type'], Frequency> = {
   1: RRule.DAILY,
   2: RRule.WEEKLY,
@@ -55,5 +61,19 @@ const rfcWeekDay: Record<number, Weekday> = {
   6: RRule.FR,
   7: RRule.SA,
 };
+
+// RRule wants you to use a +0 offset date with the local time
+const rruleDate = (dt: string) => {
+  const date = new Date(dt);
+  const year = date.getFullYear(),
+    month = date.getMonth(),
+    day = date.getDate(),
+    hours = date.getHours(),
+    mins = date.getMinutes();
+  return new Date(Date.UTC(year, month, day, hours, mins, 0));
+};
+
+/** Timezone of server */
+const timezone = DateTime.local().zoneName;
 
 type Recurrence = Required<ZoomMeetingRequest>['recurrence'];

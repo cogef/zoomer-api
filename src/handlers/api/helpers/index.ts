@@ -9,14 +9,14 @@ export const handleResponse = async (res: Response, handler: () => Promise<Handl
     }
 
     const error = result.error instanceof Error ? result.error.message : result.error;
-    res.status(result.code || 400).send({ error: result.context || error });
+    res.status(result.code || 400).send({ error, errorMessage: result.context });
 
     if (result.code && result.code >= 500) {
       console.error({ CAUGHT_ERROR: result });
     }
   } catch (err) {
     const error = err instanceof Error ? err.message : err;
-    res.status(500).send({ error });
+    res.status(500).send({ error, errorMessage: 'An unexpected server error occurred' });
     console.error({ UNCAUGHT_ERROR: err });
   }
 };

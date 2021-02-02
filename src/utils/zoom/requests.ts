@@ -1,4 +1,5 @@
 import { zoomRequest } from '../../services/zoom';
+import { stripFracSec } from '../general';
 import { ZoomMeeting, ZoomMeetingRequest, ZoomUser } from './types';
 
 export const getMeeting = (meetingID: string) => {
@@ -18,7 +19,7 @@ export const scheduleMeeting = (userID: string, meeting: ZoomMeetingRequest) => 
   return zoomRequest({
     path: `/users/${userID}/meetings`,
     method: 'POST',
-    body: meeting,
+    body: cleanMeetingReq(meeting),
   }) as Promise<ZoomMeeting>;
 };
 
@@ -39,4 +40,16 @@ export const getUser = (userID: string) => {
     }
     throw err;
   }
+};
+
+const cleanMeetingReq = (meetingReq: ZoomMeetingRequest) => {
+  const req = JSON.parse(JSON.stringify(meetingReq)) as ZoomMeetingRequest;
+  // Zoom bugs out when given fractional seconds
+  req.start_time = stripFracSec(req.start_time);
+  if (req.recurrence?.end_date_time) {
+    const end = new Date(req.recurrence.end_date_time);
+    end.setHours(23, 59);
+    req.recurrence.end_date_time = stripFracSec(end.toISOString());
+  }
+  return req;
 };

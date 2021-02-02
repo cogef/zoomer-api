@@ -1,10 +1,11 @@
 import { addMinutes } from 'date-fns';
 import { rrulestr } from 'rrule';
 import { calendar } from '../../services/googleapis';
+import { allToUTC } from './recurrence';
 
 /** Finds the first calendar that is free within the given range, using the order listed in `cals` */
 export const findFirstFree = async (timeMin: string, durationMins: number, cals: ZoomCal[], rrule?: string) => {
-  const dates = rrule ? rrulestr(rrule).all() : [new Date(timeMin)];
+  const dates = rrule ? allToUTC(rrulestr(rrule)) : [new Date(timeMin)];
   const calItems = cals.map(cal => ({ id: cal.calendarID }));
   const busyCals = new Set();
 

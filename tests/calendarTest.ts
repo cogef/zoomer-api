@@ -1,7 +1,8 @@
-import { rrulestr } from 'rrule';
-import { allToUTC, zoomToRFCRecurrence } from '../src/utils/calendar';
-import { ZoomerMeetingRequest } from '../src/utils/zoom';
+import { addDays, addMinutes, setHours } from 'date-fns';
 import util from 'util';
+import { initGAPIs } from '../src/services/googleapis';
+import { allToUTC, createEvent, zoomToRFCRecurrence } from '../src/utils/calendar';
+import { ZoomerMeetingRequest } from '../src/utils/zoom';
 
 const meetingReq1: ZoomerMeetingRequest = {
   agenda: 'Super important meeting about very important stuff',
@@ -45,10 +46,27 @@ const meetingReq2: ZoomerMeetingRequest = {
 
 const meetingReq = meetingReq2;
 
-export const rruleTest = () => {
-  const rrule = zoomToRFCRecurrence(meetingReq.recurrence!, meetingReq.start_time);
+const z2CalID = 'c_3g75uhqs69pf9mh6t4hh260cb4@group.calendar.google.com';
+
+export const calTest = async () => {
+  await initGAPIs();
+  const recur = {
+    ...meetingReq.recurrence!,
+  };
+  if (recur.end_date_time) {
+    recur.end_date_time = addDays(setHours(new Date(recur.end_date_time), 23), 1).toISOString();
+  }
+  const rrule = zoomToRFCRecurrence(recur);
+  console.log(rrule.toString());
+  createEvent(z2CalID, {
+    description: 'some rrule test',
+    start: meetingReq.start_time,
+    end: addMinutes(new Date(meetingReq.start_time), meetingReq.duration).toISOString(),
+    title: 'Test Event Alpha',
+    recurrence: rrule.toString(),
+  });
   const dates = allToUTC(rrule);
   console.log(util.inspect(dates, false, 3));
-  console.log(rrule.toText());
-  console.log(rrule.toString());
+  //console.log(rrule.toText());
+  //console.log(rrule.toString());
 };
