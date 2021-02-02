@@ -7,7 +7,7 @@ import { deleteMeeting } from '../src/handlers/api/routes/meetings/handlers/dele
 import util from 'util';
 
 const meetingReq1: ZoomerMeetingRequest = {
-  agenda: 'Super important meeting',
+  agenda: 'Super important test meeting',
   duration: 180,
   ministry: 'cap',
   password: '3241',
@@ -19,7 +19,7 @@ const meetingReq1: ZoomerMeetingRequest = {
     mute_upon_entry: true,
     waiting_room: false,
   },
-  start_time: new Date('2/5/2021 10:00 AM').toISOString(),
+  start_time: new Date('2/2/2021 6:00 PM').toISOString(),
   topic: 'Test Meeting Charlie',
   type: 8,
 };
@@ -53,14 +53,14 @@ export const fullTest = async () => {
   // The user requesting the meeting
   const user = await auth.getUser('eVgwiI6fgkVxMNXTtYuABmOgt7s2');
   try {
-    //const res = await createMeeting(user, meetingReq);
-    //const res = await getMeeting(user, '99165313619');
-    //const res = await deleteMeeting(user, '94233423438');
-    const res = await getOccurrences(user, 'angel.campbell@cogef.org');
+    const res = await createMeeting(user, meetingReq);
+    //const res = await getMeeting(user, '92254150844');
+    //const res = await deleteMeeting(user, '92254150844');
+    //const res = await getOccurrences(user, 'angel.campbell@cogef.org');
     if (res.success) {
       console.log(util.inspect({ data: res.data }, false, 10));
     } else {
-      console.error({ err: res.error });
+      console.error({ res });
     }
   } catch (err) {
     console.trace(err);

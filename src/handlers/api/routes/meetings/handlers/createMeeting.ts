@@ -4,11 +4,10 @@ import { User } from '../../../../../utils/auth';
 import * as Calendar from '../../../../../utils/calendar';
 import * as DB from '../../../../../utils/db';
 import * as Zoom from '../../../../../utils/zoom';
-import { HandlerResponse } from '../../../helpers';
+import { attemptTo, HandlerResponse } from '../../../helpers';
 
 export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRequest): Promise<HandlerResponse> => {
   const startDT = meetingReq.start_time;
-  const endDT = addMinutes(new Date(startDT), meetingReq.duration).toISOString();
   const accounts = await DB.getZoomAccounts();
 
   const hourBefore = addHours(new Date(startDT), -1).toISOString();
@@ -18,12 +17,31 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
     ? Calendar.zoomToRFCRecurrence(meetingReq.recurrence, hourBefore)
     : undefined;
 
-  const freeIdx = await Calendar.findFirstFree(hourBefore, bufferDuration, accounts, occursRrule?.toString());
-  const account = accounts[freeIdx];
+  const [freeErrResp, freeIdx] = await attemptTo('find a free account', () => {
+    return Calendar.findFirstFree(hourBefore, bufferDuration, accounts, occursRrule?.toString());
+  });
+
+  if (freeErrResp) return freeErrResp;
+  const account = accounts[freeIdx!];
 
   if (account) {
-    const meeting = await Zoom.scheduleMeeting(account.email, meetingReq);
-    const { host_key: hostKey } = await Zoom.getUser(account.email)!;
+    const [meetingErrResp, _meeting] = await attemptTo('schedule Zoom meeting', () =>
+      Zoom.scheduleMeeting(account.email, meetingReq)
+    );
+
+    if (meetingErrResp) return meetingErrResp;
+    const meeting = _meeting!;
+
+    const [userErrResp, _user] = await attemptTo(
+      'get host key',
+      () => Zoom.getUser(account.email),
+      () => Zoom.cancelMeeting(String(meeting.id))
+    );
+
+    if (userErrResp) return userErrResp;
+    const zUser = _user!;
+
+    const { host_key: hostKey } = zUser;
     const hostJoinKey = generateKey();
 
     const eventDesc =
@@ -56,35 +74,55 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
       description: eventDesc,
       start: firstOccur,
       end: addMinutes(new Date(firstOccur), meetingReq.duration).toISOString(),
-      recurrence: rrule?.toString(),
+      recurrence: rrule?.toString() || 'none',
     };
 
-    const zoomCalEventID = await Calendar.createEvent(account.calendarID, eventReq);
+    const [zCalErrResp, zoomCalEventID] = await attemptTo(
+      'add event to zoom calendar',
+      () => Calendar.createEvent(account.calendarID, eventReq),
+      () => Zoom.cancelMeeting(String(meeting.id))
+    );
+    if (zCalErrResp) return zCalErrResp;
     //const [leaderCalErr, leaderCalEventID] = await createEvent(leaderCal, eventReq);
+    //if (leaderCalErr !== null) {
+    //  return await handleError({ error: leaderCalErr, attemptingTo: 'add event to leadership calendar' }, async () => {
+    //  await Zoom.cancelMeeting(String(meeting.id));
+    //});
+    //}
     const leaderCalEventID = '~' + Math.random();
 
-    await DB.storeMeeting(
-      {
-        zoomAccount: account.email,
-        title: meetingReq.topic,
-        description: meetingReq.agenda,
-        startDate: new Date(startDT),
-        endDate: new Date(endDT),
-        meetingID: String(meeting.id),
-        hostJoinKey,
-        host: {
-          name: user.displayName!,
-          email: user.email!,
-          ministry: meetingReq.ministry,
-        },
-        calendarEvents: {
-          zoomEventID: zoomCalEventID!,
-          leadershipEventID: leaderCalEventID!,
-        },
-        reccurrence: rrule?.toText(),
-      },
-      occurrences
+    const [dbErrResp] = await attemptTo(
+      'add meeting to database',
+      () =>
+        DB.storeMeeting(
+          {
+            zoomAccount: account.email,
+            title: meetingReq.topic,
+            description: meetingReq.agenda,
+            startDate: new Date(firstOccur),
+            endDate: addMinutes(new Date(firstOccur), meetingReq.duration),
+            meetingID: String(meeting.id),
+            hostJoinKey,
+            host: {
+              name: user.displayName!,
+              email: user.email!,
+              ministry: meetingReq.ministry,
+            },
+            calendarEvents: {
+              zoomEventID: zoomCalEventID!,
+              leadershipEventID: leaderCalEventID!,
+            },
+            reccurrence: rrule?.toText() || 'none',
+          },
+          occurrences
+        ),
+      async () => {
+        await Zoom.cancelMeeting(String(meeting.id));
+        await Calendar.deleteEvent(account.calendarID, zoomCalEventID!);
+      }
     );
+
+    if (dbErrResp) return dbErrResp;
 
     return { success: true, data: { meetingID: meeting.id, hostJoinKey }, code: 201 };
   }
