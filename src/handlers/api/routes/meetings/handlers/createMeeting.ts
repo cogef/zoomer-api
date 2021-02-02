@@ -74,7 +74,7 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
       description: eventDesc,
       start: firstOccur,
       end: addMinutes(new Date(firstOccur), meetingReq.duration).toISOString(),
-      recurrence: rrule?.toString() || 'none',
+      recurrence: rrule?.toString(),
     };
 
     const [zCalErrResp, zoomCalEventID] = await attemptTo(
