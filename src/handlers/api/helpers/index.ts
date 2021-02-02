@@ -12,23 +12,13 @@ export const handleResponse = async (res: Response, handler: () => Promise<Handl
     res.status(result.code || 400).send({ error: result.context || error });
 
     if (result.code && result.code >= 500) {
-      console.error({ CAUGHT_ERROR: result.error });
+      console.error({ CAUGHT_ERROR: result });
     }
   } catch (err) {
     const error = err instanceof Error ? err.message : err;
     res.status(500).send({ error });
     console.error({ UNCAUGHT_ERROR: err });
   }
-};
-
-export const handleError = async (opts: HandleErrOpts, cleanup?: () => any): Promise<HandlerErrorResponse> => {
-  cleanup && (await cleanup());
-  return {
-    success: false,
-    error: opts.error,
-    context: `An error occurred while attempting to ${opts.attemptingTo}`,
-    code: opts.code || 500,
-  };
 };
 
 /** Attempts an operation, `op`
@@ -62,12 +52,6 @@ export const attemptTo = async <T>(
 };
 
 type AttemptResult<T> = [ErrResp: HandlerErrorResponse, Data: null] | [ErrResp: null, Data: T];
-
-type HandleErrOpts = {
-  error: HandlerErrorResponse['error'];
-  attemptingTo: string;
-  code?: number;
-};
 
 export type HandlerResponse = HandlerSuccessResponse | HandlerErrorResponse;
 
