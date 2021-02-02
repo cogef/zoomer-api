@@ -38,8 +38,8 @@ export const createEvent = async (calendarID: string, event: EventReq) => {
     requestBody: {
       summary: event.title,
       description: event.description,
-      start: { dateTime: event.start, timeZone: utcTzDbName },
-      end: { dateTime: event.end, timeZone: utcTzDbName },
+      start: { dateTime: event.start, timeZone: timezone },
+      end: { dateTime: event.end, timeZone: timezone },
       ...(rrule ? { recurrence: [rrule] } : {}),
     },
   });
@@ -54,8 +54,7 @@ export const deleteEvent = async (calendarID: string, eventID: string) => {
   return res.data;
 };
 
-/** A TZ database name that uses UTC time */
-const utcTzDbName = 'Africa/Abidjan';
+const timezone = 'America/New_York';
 
 type ZoomCal = { calendarID: string; sequence: number };
 
