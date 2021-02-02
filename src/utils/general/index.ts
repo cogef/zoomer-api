@@ -8,3 +8,7 @@ export const tryCatch = async <T>(fn: () => Promise<T> | T): Promise<TryResult<T
   }
 };
 type TryResult<T> = [Error: null, Data: T] | [Error: Error | string, Data: null];
+
+export const stripFracSec = (dt: string) => {
+  return dt.replace(/\.\d+/, '');
+};

@@ -32,7 +32,7 @@ const meetingReq2: ZoomerMeetingRequest = {
   recurrence: {
     type: 1,
     repeat_interval: 1,
-    end_date_time: '2021-04-28T04:57:00.000Z',
+    end_date_time: '2021-02-26T04:57:00.000Z',
   },
   settings: {
     host_video: false,
@@ -42,11 +42,11 @@ const meetingReq2: ZoomerMeetingRequest = {
     waiting_room: false,
   },
   start_time: '2021-01-24T23:30:00.000Z',
-  topic: 'Test Meeting Delta',
+  topic: 'Test Meeting Echo',
   type: 8,
 };
 
-const meetingReq = meetingReq1;
+const meetingReq = meetingReq2;
 
 export const fullTest = async () => {
   await initGAPIs();
@@ -60,7 +60,7 @@ export const fullTest = async () => {
     if (res.success) {
       console.log(util.inspect({ data: res.data }, false, 10));
     } else {
-      console.error({ res });
+      console.error(util.inspect({ res }, false, 5));
     }
   } catch (err) {
     console.trace(err);
