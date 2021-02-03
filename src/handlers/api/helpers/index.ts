@@ -30,18 +30,22 @@ export const handleResponse = async (res: Response, handler: () => Promise<Handl
 export const attemptTo = async <T>(
   attemptingTo: string,
   op: () => Promise<T> | T,
-  cleanup?: () => any
+  cleanup?: () => any,
+  failResult?: string
 ): Promise<AttemptResult<T>> => {
   const res = await tryCatch(op);
 
   if (res[0] !== null) {
     if (cleanup) await cleanup();
 
+    const errorClause = `An error occurred while attempting to ${attemptingTo}.`;
+    const resultClause = failResult ? `As a result of the failed operation, ${failResult}.` : '';
+
     return [
       {
         success: false,
         error: res[0],
-        context: `An error occurred while attempting to ${attemptingTo}`,
+        context: `${errorClause}\n${resultClause}`,
         code: 500,
       },
       null,

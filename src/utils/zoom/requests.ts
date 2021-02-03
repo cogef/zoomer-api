@@ -23,9 +23,17 @@ export const scheduleMeeting = (userID: string, meeting: ZoomMeetingRequest) => 
   }) as Promise<ZoomMeeting>;
 };
 
-export const cancelMeeting = (meetingID: string) => {
+export const updateMeeting = (meetingID: string, meeting: ZoomMeetingRequest) => {
   return zoomRequest({
     path: `/meetings/${meetingID}`,
+    method: 'PATCH',
+    body: cleanMeetingReq(meeting),
+  }) as Promise<ZoomMeeting>;
+};
+
+export const cancelMeeting = (meetingID: string) => {
+  return zoomRequest({
+    path: `/meetings/${meetingID}?schedule_for_reminder=false`,
     method: 'DELETE',
     noResponse: true,
   });

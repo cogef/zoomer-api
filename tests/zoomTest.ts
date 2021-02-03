@@ -1,6 +1,6 @@
 import { stripFracSec } from '../src/utils/general';
 import { ZoomerMeetingRequest } from '../src/utils/zoom';
-import { getUser, scheduleMeeting } from '../src/utils/zoom/requests';
+import { cancelMeeting, getUser, scheduleMeeting } from '../src/utils/zoom/requests';
 
 const meetingReq1: ZoomerMeetingRequest = {
   agenda: 'Super important meeting',
@@ -66,13 +66,18 @@ if (meetingReq.recurrence?.end_date_time) {
 }
 
 export const zoomTest = async () => {
-  scheduleMeeting(user, meetingReq)
-    .then(meeting => {
-      console.log({ meeting });
-    })
-    .catch(err => {
-      console.log({ err });
-    });
+  //scheduleMeeting(user, meetingReq)
+  //  .then(meeting => {
+  //    console.log({ meeting });
+  //  })
+  //  .catch(err => {
+  //    console.log({ err });
+  //  });
+
+  cancelMeeting('96309855063').catch(err => {
+    console.log({ err });
+  });
+
   //getMe().then(({ err, data }) => {
   //  if (err) {
   //    console.error({ err });

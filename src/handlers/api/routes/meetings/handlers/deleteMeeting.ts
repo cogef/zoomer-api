@@ -23,7 +23,7 @@ export const deleteMeeting = async (user: User, meetingID: string): Promise<Hand
   await Zoom.cancelMeeting(meetingID);
   await Calendar.deleteEvent(zoomAccount.calendarID, dbEvent.calendarEvents.zoomEventID);
   //await Calendar.deleteEvent(leadershipCalendarID, dbMeeting.calendarEvents.leadershipEventID);
-  await DB.removeEvent(meetingID);
+  await DB.removeMeeting(meetingID);
 
   return { success: true, data: {}, code: 204 };
 };
