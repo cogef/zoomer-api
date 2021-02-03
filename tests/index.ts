@@ -9,10 +9,10 @@ import { zoomTest } from './zoomTest';
 import { calTest } from './calendarTest';
 
 // Tests
-//fullTest();
+fullTest();
 //rruleTest();
 //calTest();
 //freebusyTest();
 //adminTest();
-zoomTest();
+//zoomTest();
 //dbTest();

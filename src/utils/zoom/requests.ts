@@ -4,9 +4,9 @@ import { ZoomMeeting, ZoomMeetingRequest, ZoomUser } from './types';
 
 export const getMeeting = (meetingID: string) => {
   try {
-    return zoomRequest({
+    return zoomRequest<ZoomMeeting>({
       path: `/meetings/${meetingID}`,
-    }) as Promise<ZoomMeeting>;
+    });
   } catch (err) {
     if (err.status === 404) {
       return null;
@@ -16,32 +16,31 @@ export const getMeeting = (meetingID: string) => {
 };
 
 export const scheduleMeeting = (userID: string, meeting: ZoomMeetingRequest) => {
-  return zoomRequest({
+  return zoomRequest<ZoomMeeting>({
     path: `/users/${userID}/meetings`,
     method: 'POST',
     body: cleanMeetingReq(meeting),
-  }) as Promise<ZoomMeeting>;
+  });
 };
 
 export const updateMeeting = (meetingID: string, meeting: ZoomMeetingRequest) => {
-  return zoomRequest({
+  return zoomRequest<void>({
     path: `/meetings/${meetingID}`,
     method: 'PATCH',
     body: cleanMeetingReq(meeting),
-  }) as Promise<ZoomMeeting>;
+  });
 };
 
 export const cancelMeeting = (meetingID: string) => {
-  return zoomRequest({
+  return zoomRequest<void>({
     path: `/meetings/${meetingID}?schedule_for_reminder=false`,
     method: 'DELETE',
-    noResponse: true,
   });
 };
 
 export const getUser = (userID: string) => {
   try {
-    return zoomRequest({ path: `/users/${userID}` }) as Promise<ZoomUser>;
+    return zoomRequest<ZoomUser>({ path: `/users/${userID}` });
   } catch (err) {
     if (err.status === 404) {
       return null;
@@ -55,9 +54,7 @@ const cleanMeetingReq = (meetingReq: ZoomMeetingRequest) => {
   // Zoom bugs out when given fractional seconds
   req.start_time = stripFracSec(req.start_time);
   if (req.recurrence?.end_date_time) {
-    const end = new Date(req.recurrence.end_date_time);
-    end.setHours(23, 59);
-    req.recurrence.end_date_time = stripFracSec(end.toISOString());
+    req.recurrence.end_date_time = stripFracSec(req.recurrence.end_date_time);
   }
   return req;
 };

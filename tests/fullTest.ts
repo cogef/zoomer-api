@@ -5,6 +5,7 @@ import { getMeeting, getOccurrences } from '../src/handlers/api/routes/meetings/
 import { createMeeting } from '../src/handlers/api/routes/meetings/handlers/createMeeting';
 import { deleteMeeting } from '../src/handlers/api/routes/meetings/handlers/deleteMeeting';
 import util from 'util';
+import { updateMeeting } from '../src/handlers/api/routes/meetings/handlers/updateMeeting';
 
 const meetingReq1: ZoomerMeetingRequest = {
   agenda: 'Super important test meeting',
@@ -46,23 +47,53 @@ const meetingReq2: ZoomerMeetingRequest = {
   type: 8,
 };
 
-const meetingReq = meetingReq2;
+const meetingReq3: ZoomerMeetingRequest = {
+  agenda: 'Super important end of month stuff',
+  duration: 90,
+  ministry: 'media',
+  password: '2341',
+  type: 8,
+  recurrence: {
+    type: 3,
+    repeat_interval: 1,
+    monthly_week: -1,
+    monthly_week_day: 1,
+    end_date_time: new Date('3/28/2021 11:59 PM').toISOString(),
+  },
+  settings: {
+    host_video: false,
+    participant_video: false,
+    join_before_host: true,
+    mute_upon_entry: false,
+    waiting_room: false,
+    auto_recording: 'local',
+  },
+  start_time: new Date('2/5/2021 5:30 PM').toISOString(),
+  topic: 'Test Meeting New Foxtrot',
+};
+
+const meetingReq = meetingReq3;
+const meetingID = '96006187948';
 
 export const fullTest = async () => {
   await initGAPIs();
   // The user requesting the meeting
   const user = await auth.getUser('eVgwiI6fgkVxMNXTtYuABmOgt7s2');
   try {
-    const res = await createMeeting(user, meetingReq);
+    //const res = await createMeeting(user, meetingReq);
+    const res = await updateMeeting(user, meetingID, meetingReq);
     //const res = await getMeeting(user, '92254150844');
     //const res = await deleteMeeting(user, '92254150844');
     //const res = await getOccurrences(user, 'angel.campbell@cogef.org');
     if (res.success) {
       console.log(util.inspect({ data: res.data }, false, 10));
+      return;
     } else {
       console.error(util.inspect({ res }, false, 5));
+      return;
     }
   } catch (err) {
     console.trace(err);
+    return;
   }
 };

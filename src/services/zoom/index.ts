@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import fetch from 'node-fetch';
 
-export const zoomRequest = async (opts: Options) => {
+export const zoomRequest = async <T>(opts: Options) => {
   const apiKey = process.env.ZOOM_API_KEY!;
   const apiSecret = process.env.ZOOM_API_SECRET!;
 
@@ -24,7 +24,7 @@ export const zoomRequest = async (opts: Options) => {
 
   const status = res.status;
 
-  let body = opts.noResponse ? {} : await res.json();
+  let body: T = status === 204 ? null : await res.json();
   if (status >= 400) {
     throw { context: 'zoom-request', status, error: body };
   }
@@ -33,5 +33,4 @@ export const zoomRequest = async (opts: Options) => {
 
 type Options = {
   path: string;
-  noResponse?: boolean;
 } & ({ method?: 'GET' | 'DELETE'; body?: never } | { method: 'POST' | 'PUT' | 'PATCH'; body: any });

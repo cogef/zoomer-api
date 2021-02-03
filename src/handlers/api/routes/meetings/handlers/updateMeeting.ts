@@ -30,8 +30,8 @@ export const updateMeeting = async (
     ? Calendar.zoomToRFCRecurrence(meetingReq.recurrence, hourBefore)
     : undefined;
 
-  const usedAccount = accounts.find(acc => acc.email === dbEvent.zoomAccount);
-  if (!usedAccount) {
+  const oldAccount = accounts.find(acc => acc.email === dbEvent.zoomAccount);
+  if (!oldAccount) {
     return {
       success: false,
       error: 'Could not find the Zoom account this meeting was scheduled with.\nPlease contact webadmins@cogef.org',
@@ -40,33 +40,36 @@ export const updateMeeting = async (
   }
 
   const [delCalErr] = await attemptTo('remove old calendar event', () =>
-    Calendar.deleteEvent(usedAccount.calendarID, dbEvent.calendarEvents.zoomEventID)
+    Calendar.deleteEvent(oldAccount.calendarID, dbEvent.calendarEvents.zoomEventID)
   );
   if (delCalErr) return delCalErr;
   //await Calendar.deleteEvent(leaderShip, dbEvent.calendarEvents.leadershipEventID);
 
   const [sameFreeErrResp, sameFreeIdx] = await attemptTo('see if the same Zoom account is free', () =>
-    Calendar.findFirstFree(hourBefore, bufferDuration, [usedAccount], occursRrule?.toString())
+    Calendar.findFirstFree(hourBefore, bufferDuration, [oldAccount], occursRrule?.toString())
   );
 
   if (sameFreeErrResp) return sameFreeErrResp;
-  const usingSameAccount = sameFreeIdx === 0;
+  const usingOldAccount = sameFreeIdx === 0;
 
-  let account = usedAccount;
+  let account: DB.ZoomAccount;
 
-  if (!usingSameAccount) {
+  if (!usingOldAccount) {
     const [freeErrResp, freeIdx] = await attemptTo('find a free account', () =>
       Calendar.findFirstFree(hourBefore, bufferDuration, accounts, occursRrule?.toString())
     );
 
     if (freeErrResp) return freeErrResp;
     account = accounts[freeIdx!];
+  } else {
+    account = oldAccount;
   }
 
   if (account) {
     const [meetingErrResp, _meeting] = await attemptTo('update Zoom meeting', async () => {
-      if (usingSameAccount) {
+      if (usingOldAccount) {
         await Zoom.updateMeeting(meetingID, meetingReq);
+        return await Zoom.getMeeting(meetingID);
       } else {
         await Zoom.cancelMeeting(meetingID);
         return await Zoom.scheduleMeeting(account.email, meetingReq);
@@ -130,7 +133,7 @@ export const updateMeeting = async (
     //  await Zoom.cancelMeeting(String(meeting.id));
     //});
     //}
-    const leaderCalEventID = '~' + Math.random();
+    const leaderCalEventID = '';
 
     const [dbErrResp] = await attemptTo(
       'update meeting in database',
@@ -168,7 +171,7 @@ export const updateMeeting = async (
 
     if (dbErrResp) return dbErrResp;
 
-    return { success: true, data: { meetingID: meeting.id, newMeeting: !usingSameAccount } };
+    return { success: true, data: { meetingID: meeting.id, newMeeting: !usingOldAccount } };
   }
 
   console.log('No calendars free');
