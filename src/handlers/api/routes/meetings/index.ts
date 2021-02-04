@@ -5,6 +5,7 @@ import { validateUser, initializeGAPIs } from '../../middleware';
 import { handleResponse } from '../../helpers';
 import { createMeeting, deleteMeeting, getMeeting, getOccurrences } from './handlers';
 import { getStartURL } from './handlers/getStartURL';
+import { updateMeeting } from './handlers/updateMeeting';
 
 const router = Router();
 
@@ -34,14 +35,20 @@ router.get('/', (req, res) => {
   }
 });
 
+router.post('/', (req, res) => {
+  const handler = () => createMeeting(req.user!, req.body);
+  handleResponse(res, handler);
+});
+
 router.get('/:id', (req, res) => {
   const { params } = req;
   const handler = () => getMeeting(req.user!, params.id);
   handleResponse(res, handler);
 });
 
-router.post('/', (req, res) => {
-  const handler = () => createMeeting(req.user!, req.body);
+router.put('/:id', (req, res) => {
+  const { params, body } = req;
+  const handler = () => updateMeeting(req.user!, params.id, body);
   handleResponse(res, handler);
 });
 
