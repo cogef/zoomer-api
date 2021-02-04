@@ -30,7 +30,7 @@ export const storeMeeting = async (event: MeetingInfo, occurs: OccurrenceInfo[])
       hostEmail: event.host.email,
       isSeudo: Boolean(occur.isSeudo),
       sequence: idx + 1,
-      totalOccurrences: occurs.length,
+      totalOccurrences: occurs.length, //TODO: Would rather store this on meeting doc, would require getOccur... refactor
     };
 
     batch.create(occRef, occurrence);
@@ -43,11 +43,15 @@ export const getMeeting = async (meetingID: string) => {
   return (await db.doc(`meetings/${meetingID}`).get()).data() as StoredMeeting | undefined;
 };
 
-export const removeEvent = async (meetingID: string) => {
+export const removeMeeting = async (meetingID: string) => {
   const meetingRef = db.doc(`meetings/${meetingID}`);
   const occurrencesRef = meetingRef.collection('occurrences');
   const occurDocs = (await occurrencesRef.get()).docs;
 
+  // These batch sizes should usually be limited (~100 docs)
+  // for memory concerns and because there's a 500 doc batch limit
+  // but Zoom only allows 50 occurrences of a meeting, so the batch
+  // size should never exceed 51 (+1 meeting doc)
   const batch = db.batch();
 
   occurDocs.forEach(doc => {

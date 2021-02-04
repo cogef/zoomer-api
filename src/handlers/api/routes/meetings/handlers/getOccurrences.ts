@@ -1,5 +1,5 @@
 import { User } from '../../../../../utils/auth';
-import { StoredMeeting, StoredOccurrence } from '../../../../../utils/db';
+import { StoredMeeting } from '../../../../../utils/db';
 import { HandlerResponse } from '../../../helpers';
 import { isAuthorized } from '../helpers';
 import * as DB from '../../../../../utils/db';
