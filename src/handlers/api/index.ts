@@ -5,14 +5,14 @@ import { logRequest } from './middleware';
 
 const app = express();
 
-app.use(logRequest);
-
 // handle pre-flight requests
 app.options('*', (req, res) => {
   res.sendStatus(204); // No Content
 });
 
 app.use(express.json());
+
+app.use(logRequest);
 
 app.use('/meetings', MeetingsRouter);
 
