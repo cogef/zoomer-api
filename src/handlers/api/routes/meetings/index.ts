@@ -1,7 +1,7 @@
 /// <reference path='../../express.d.ts' />
 
 import { Router } from 'express';
-import { validateUser, initializeGAPIs } from '../../middleware';
+import { authenticate, initializeGAPIs } from '../../middleware';
 import { handleResponse } from '../../helpers';
 import { createMeeting, deleteMeeting, getMeeting, getOccurrences } from './handlers';
 import { getStartURL } from './handlers/getStartURL';
@@ -15,7 +15,7 @@ router.post('/:id/start_url', (req, res) => {
   handleResponse(res, handler);
 });
 
-router.use(validateUser);
+router.use(authenticate);
 
 router.get('/:id/start_url', (req, res) => {
   const { params } = req;

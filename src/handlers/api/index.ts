@@ -1,6 +1,6 @@
 import serverless from 'serverless-http';
 import express from 'express';
-import { MeetingsRouter } from './routes';
+import { MeetingsRouter, UsersRouter } from './routes';
 import { logRequest } from './middleware';
 
 const app = express();
@@ -16,8 +16,10 @@ app.use(logRequest);
 
 app.use('/meetings', MeetingsRouter);
 
+app.use('/users', UsersRouter);
+
 app.all('*', (req, res) => {
   res.sendStatus(404); // Not Found
 });
 
-export const api = serverless(app);
+export const meetingsAPI = serverless(app);

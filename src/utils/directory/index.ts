@@ -7,3 +7,8 @@ export const getUserGroups = async (userEmail: string) => {
 
   return data.groups!.map(g => g.email!);
 };
+
+export const isAdmin = async (email: string) => {
+  const groups = await getUserGroups(email);
+  return groups.includes('zoom.admins@cogef.org');
+};
