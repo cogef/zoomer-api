@@ -55,6 +55,17 @@ export const deleteEvent = async (calendarID: string, eventID: string) => {
   return res.data;
 };
 
+export const restoreEvent = async (calendarID: string, eventID: string) => {
+  const res = await calendar.events.patch({
+    calendarId: calendarID,
+    eventId: eventID,
+    requestBody: {
+      status: 'confirmed',
+    },
+  });
+  return res.data;
+};
+
 const timezone = 'America/New_York';
 
 type ZoomCal = { calendarID: string; sequence: number };
