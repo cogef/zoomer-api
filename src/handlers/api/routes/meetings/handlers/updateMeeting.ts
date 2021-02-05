@@ -174,6 +174,12 @@ export const updateMeeting = async (
     return { success: true, data: { meetingID: meeting.id, newMeeting: !usingOldAccount } };
   }
 
+  const [restoreErr] = await attemptTo('restore calendar event after finding no free calendars', () =>
+    Calendar.restoreEvent(oldAccount.calendarID, dbEvent.calendarEvents.zoomEventID)
+  );
+
+  if (restoreErr) return restoreErr;
+
   console.log('No calendars free');
   return { success: false, error: 'no calendars free', code: 409 };
 };
