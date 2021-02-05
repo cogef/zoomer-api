@@ -63,12 +63,24 @@ export const removeMeeting = async (meetingID: string) => {
   await batch.commit();
 };
 
-export const getOccurrences = async (hostEmail: string) => {
-  const query = db
+export const getOccurrences = async (hostEmail: string, opts: OccursOptions) => {
+  let query = db
     .collectionGroup('occurrences')
     .where('hostEmail', '==', hostEmail)
-    .where('endDate', '>=', new Date())
-    .orderBy('endDate');
+    .where('endDate', '>=', new Date(opts.startDate));
+
+  if (opts.endDate) {
+    query = query.where('endDate', '<=', new Date(opts.endDate));
+  }
+
+  query = query.orderBy('endDate');
+
+  if (opts.last) {
+    const occDoc = await db.doc(`meetings/${opts.last.meetingID}/occurrences/${opts.last.occurrenceID}`).get();
+    query = query.startAfter(occDoc);
+  }
+
+  query = query.limit(opts.limit);
 
   //TODO: Get meeting doc for each meeting to create following result:
   /*
@@ -83,6 +95,16 @@ export const getOccurrences = async (hostEmail: string) => {
 
   const occurs = (await query.get()).docs.map(d => d.data() as StoredOccurrence);
   return occurs;
+};
+
+type OccursOptions = {
+  limit: number;
+  startDate: number;
+  endDate?: number;
+  last?: {
+    meetingID: string;
+    occurrenceID: string;
+  };
 };
 
 /** Returns Zoom accounts in order of sequence */
