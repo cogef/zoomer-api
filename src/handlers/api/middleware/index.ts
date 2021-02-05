@@ -7,7 +7,7 @@ export const initializeGAPIs: RequestHandler = async (req, res, next) => {
   next();
 };
 
-export const validateUser: RequestHandler = async (req, res, next) => {
+export const authenticate: RequestHandler = async (req, res, next) => {
   const token = req.headers.authorization?.replace(/[Bb]earer /, '');
   const user = await getUserFromToken(token);
 
