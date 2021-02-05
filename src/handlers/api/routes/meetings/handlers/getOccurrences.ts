@@ -4,12 +4,12 @@ import { HandlerResponse } from '../../../helpers';
 import { isAuthorized } from '../helpers';
 import * as DB from '../../../../../utils/db';
 
-export const getOccurrences = async (user: User, hostEmail: string): Promise<HandlerResponse> => {
+export const getOccurrences = async (user: User, hostEmail: string, opts: Options): Promise<HandlerResponse> => {
   if (!isAuthorized(hostEmail, user.email!)) {
     return { success: false, error: 'not authorized', code: 401 };
   }
 
-  const occurrences = await DB.getOccurrences(hostEmail);
+  const occurrences = await DB.getOccurrences(hostEmail, opts);
   const meetingIDs = occurrences.reduce((acc, occ) => {
     acc.add(occ.meetingID);
     return acc;
@@ -32,4 +32,14 @@ export const getOccurrences = async (user: User, hostEmail: string): Promise<Han
   }
 
   return { success: true, data: result };
+};
+
+type Options = {
+  last?: {
+    meetingID: string;
+    occurrenceID: string;
+  };
+  limit: number;
+  startDate: number;
+  endDate?: number;
 };

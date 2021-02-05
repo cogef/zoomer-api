@@ -6,6 +6,7 @@ import { createMeeting } from '../src/handlers/api/routes/meetings/handlers/crea
 import { deleteMeeting } from '../src/handlers/api/routes/meetings/handlers/deleteMeeting';
 import util from 'util';
 import { updateMeeting } from '../src/handlers/api/routes/meetings/handlers/updateMeeting';
+import { startOfDay } from 'date-fns';
 
 const meetingReq1: ZoomerMeetingRequest = {
   agenda: 'Super important test meeting',
@@ -81,10 +82,18 @@ export const fullTest = async () => {
   const user = await auth.getUser('eVgwiI6fgkVxMNXTtYuABmOgt7s2');
   try {
     //const res = await createMeeting(user, meetingReq);
-    const res = await updateMeeting(user, meetingID, meetingReq);
+    //const res = await updateMeeting(user, meetingID, meetingReq);
     //const res = await getMeeting(user, '92254150844');
     //const res = await deleteMeeting(user, '92254150844');
-    //const res = await getOccurrences(user, 'angel.campbell@cogef.org');
+    const res = await getOccurrences(user, 'angel.campbell@cogef.org', {
+      limit: 3,
+      startDate: startOfDay(new Date()).valueOf(),
+      last: {
+        meetingID: '96526535787',
+        occurrenceID: '1612479600000',
+      },
+    });
+
     if (res.success) {
       console.log(util.inspect({ data: res.data }, false, 10));
       return;
