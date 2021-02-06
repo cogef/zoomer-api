@@ -1,4 +1,4 @@
-import { addMinutes } from 'date-fns';
+import { DateTime } from 'luxon';
 import { rrulestr } from 'rrule';
 import { calendar } from '../../services/googleapis';
 import { allToUTC } from './recurrence';
@@ -12,7 +12,7 @@ export const findFirstFree = async (timeMin: string, durationMins: number, cals:
   await Promise.all(
     dates.map(async date => {
       const dtStart = date.toISOString();
-      const dtEnd = addMinutes(date, durationMins).toISOString();
+      const dtEnd = DateTime.fromJSDate(date).plus({ minutes: durationMins }).toUTC().toISO();
 
       const { data } = await calendar.freebusy.query({
         requestBody: { timeMin: dtStart, timeMax: dtEnd, items: calItems },

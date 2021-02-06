@@ -1,5 +1,4 @@
 require('dotenv/config');
-import { addDays } from 'date-fns';
 //import { adminTest } from './directoryTest'
 import { dbTest } from './dbTest';
 import { freebusyTest } from './freebusyTest';
@@ -8,13 +7,18 @@ import { rruleTest } from './rruleTest';
 import { zoomTest } from './zoomTest';
 import { calTest } from './calendarTest';
 import { adminTest } from './isAdmin';
+import { initGAPIs } from '../src/services/googleapis';
+import { gmailTest } from './gmailTest';
 
 // Tests
-//fullTest();
-//rruleTest();
-//calTest();
-adminTest();
-//freebusyTest();
-//adminTest();
-//zoomTest();
-//dbTest();
+initGAPIs().then(
+  () => fullTest()
+  //rruleTest()
+  //calTest()
+  //adminTest()
+  //gmailTest()
+  //freebusyTest()
+  //adminTest()
+  //zoomTest()
+  //dbTest()
+);

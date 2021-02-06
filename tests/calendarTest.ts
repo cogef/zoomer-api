@@ -1,4 +1,4 @@
-import { addDays, addMinutes, setHours } from 'date-fns';
+import { DateTime } from 'luxon';
 import util from 'util';
 import { initGAPIs } from '../src/services/googleapis';
 import { allToUTC, createEvent, deleteEvent, restoreEvent, zoomToRFCRecurrence } from '../src/utils/calendar';
@@ -49,7 +49,7 @@ const meetingReq3: ZoomerMeetingRequest = {
   duration: 180,
   ministry: 'cap',
   password: '3241',
-  //recurrence: { type: 2, repeat_interval: 1, weekly_days: '2,3', end_date_time: '2021-02-10T01:00:00.000Z' },
+  recurrence: { type: 2, repeat_interval: 1, weekly_days: '2,3', end_date_time: '2021-02-10T01:00:00.000Z' },
   settings: {
     host_video: false,
     participant_video: false,
@@ -70,7 +70,7 @@ export const calTest = async () => {
   await initGAPIs();
   const recur = meetingReq.recurrence;
   if (recur?.end_date_time) {
-    recur.end_date_time = addDays(setHours(new Date(recur.end_date_time), 23), 1).toISOString();
+    recur.end_date_time = DateTime.fromISO(recur.end_date_time).plus({ day: 1 }).toUTC().toISO();
   }
   const rrule = recur ? zoomToRFCRecurrence(recur) : null;
   //console.log(rrule.toString());
