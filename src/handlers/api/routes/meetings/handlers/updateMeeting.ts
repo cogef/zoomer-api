@@ -1,4 +1,4 @@
-import { addHours, addMinutes } from 'date-fns';
+import { DateTime } from 'luxon';
 import { User } from '../../../../../utils/auth';
 import * as Calendar from '../../../../../utils/calendar';
 import * as DB from '../../../../../utils/db';
@@ -23,7 +23,7 @@ export const updateMeeting = async (
   const startDT = meetingReq.start_time;
   const accounts = await DB.getZoomAccounts();
 
-  const hourBefore = addHours(new Date(startDT), -1).toISOString();
+  const hourBefore = DateTime.fromISO(startDT).minus({ hour: 1 }).toUTC().toISO();
   const bufferDuration = meetingReq.duration + 120; // buffer duration includes hour before and after
 
   const occursRrule = meetingReq.recurrence
@@ -111,12 +111,13 @@ export const updateMeeting = async (
     ];
 
     // actual start time might not fall into reccurrence
-    const firstOccur = occurrences[0].start_time;
+    const firstOccurStart = DateTime.fromISO(occurrences[0].start_time);
+    const firstOccurEnd = firstOccurStart.plus({ minutes: meetingReq.duration });
     const eventReq = {
       title: meetingReq.topic,
       description: eventDesc,
-      start: firstOccur,
-      end: addMinutes(new Date(firstOccur), meetingReq.duration).toISOString(),
+      start: firstOccurStart.toUTC().toISO(),
+      end: firstOccurEnd.toUTC().toISO(),
       recurrence: rrule?.toString(),
     };
 
@@ -144,8 +145,8 @@ export const updateMeeting = async (
             zoomAccount: account.email,
             title: meetingReq.topic,
             description: meetingReq.agenda,
-            startDate: new Date(firstOccur),
-            endDate: addMinutes(new Date(firstOccur), meetingReq.duration),
+            startDate: firstOccurStart.toJSDate(),
+            endDate: firstOccurEnd.toJSDate(),
             meetingID: String(meeting.id),
             hostJoinKey,
             host: {

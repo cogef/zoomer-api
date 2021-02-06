@@ -6,7 +6,7 @@ import { createMeeting } from '../src/handlers/api/routes/meetings/handlers/crea
 import { deleteMeeting } from '../src/handlers/api/routes/meetings/handlers/deleteMeeting';
 import util from 'util';
 import { updateMeeting } from '../src/handlers/api/routes/meetings/handlers/updateMeeting';
-import { startOfDay } from 'date-fns';
+import { DateTime } from 'luxon';
 
 const meetingReq1: ZoomerMeetingRequest = {
   agenda: 'Super important test meeting',
@@ -58,7 +58,7 @@ const meetingReq3: ZoomerMeetingRequest = {
     type: 3,
     repeat_interval: 1,
     monthly_week: -1,
-    monthly_week_day: 1,
+    monthly_week_day: 4,
     end_date_time: new Date('3/28/2021 11:59 PM').toISOString(),
   },
   settings: {
@@ -70,11 +70,11 @@ const meetingReq3: ZoomerMeetingRequest = {
     auto_recording: 'local',
   },
   start_time: new Date('2/5/2021 5:30 PM').toISOString(),
-  topic: 'Test Meeting New Foxtrot',
+  topic: 'Test Meeting Garden',
 };
 
 const meetingReq = meetingReq3;
-const meetingID = '96006187948';
+const meetingID = '98313795612';
 
 export const fullTest = async () => {
   await initGAPIs();
@@ -82,17 +82,17 @@ export const fullTest = async () => {
   const user = await auth.getUser('eVgwiI6fgkVxMNXTtYuABmOgt7s2');
   try {
     //const res = await createMeeting(user, meetingReq);
-    //const res = await updateMeeting(user, meetingID, meetingReq);
+    const res = await updateMeeting(user, meetingID, meetingReq);
     //const res = await getMeeting(user, '92254150844');
     //const res = await deleteMeeting(user, '92254150844');
-    const res = await getOccurrences(user, 'angel.campbell@cogef.org', {
-      limit: 3,
-      startDate: startOfDay(new Date()).valueOf(),
-      last: {
-        meetingID: '96526535787',
-        occurrenceID: '1612479600000',
-      },
-    });
+    //const res = await getOccurrences(user, 'angel.campbell@cogef.org', {
+    //  limit: 3,
+    //  startDate: DateTime.local().startOf('day').toMillis(),
+    //  //last: {
+    //  //  meetingID: '96526535787',
+    //  //  occurrenceID: '1612479600000',
+    //  //},
+    //});
 
     if (res.success) {
       console.log(util.inspect({ data: res.data }, false, 10));

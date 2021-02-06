@@ -1,5 +1,5 @@
-import { addMinutes } from 'date-fns';
 import { firestore } from 'firebase-admin';
+import { DateTime } from 'luxon';
 import { db } from '../../services/firebase';
 import { MeetingInfo, StoredMeeting } from './';
 import { OccurrenceInfo, StoredOccurrence, ZoomAccount } from './types';
@@ -10,22 +10,22 @@ export const storeMeeting = async (event: MeetingInfo, occurs: OccurrenceInfo[])
 
   const meeting: StoredMeeting = {
     ...event,
-    startDate: toTimestamp(event.startDate),
-    endDate: toTimestamp(event.endDate),
-    createdAt: toTimestamp(new Date()),
+    startDate: toTimestamp(event.startDate.valueOf()),
+    endDate: toTimestamp(event.endDate.valueOf()),
+    createdAt: toTimestamp(Date.now()),
   };
 
   batch.create(meetingRef, meeting);
 
   occurs.forEach((occur, idx) => {
-    const startDate = new Date(occur.start_time);
-    const endDate = addMinutes(startDate, occur.duration);
+    const startDate = DateTime.fromISO(occur.start_time);
+    const endDate = startDate.plus({ minutes: occur.duration });
     const occRef = meetingRef.collection('occurrences').doc(occur.occurrence_id);
 
     const occurrence: StoredOccurrence = {
       occurrenceID: occur.occurrence_id,
-      startDate: toTimestamp(startDate),
-      endDate: toTimestamp(endDate),
+      startDate: toTimestamp(startDate.toMillis()),
+      endDate: toTimestamp(endDate.toMillis()),
       meetingID: event.meetingID,
       hostEmail: event.host.email,
       isSeudo: Boolean(occur.isSeudo),
@@ -120,4 +120,4 @@ export const getZoomAccount = async (email: string) => {
   }
 };
 
-const toTimestamp = (date: Date) => firestore.Timestamp.fromDate(date);
+const toTimestamp = (ts: number) => firestore.Timestamp.fromMillis(ts);

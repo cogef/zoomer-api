@@ -22,4 +22,4 @@ app.all('*', (req, res) => {
   res.sendStatus(404); // Not Found
 });
 
-export const meetingsAPI = serverless(app);
+export const api = serverless(app);

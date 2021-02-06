@@ -13,6 +13,7 @@ export const initGAPIs = async () => {
       'https://www.googleapis.com/auth/calendar.readonly',
       'https://www.googleapis.com/auth/calendar.events',
       'https://www.googleapis.com/auth/admin.directory.group.readonly',
+      'https://www.googleapis.com/auth/gmail.send',
     ],
     clientOptions: {
       // Impersonating Zoom Scheduler
@@ -27,3 +28,5 @@ export const initGAPIs = async () => {
 export const calendar = google.calendar('v3');
 
 export const admin = google.admin('directory_v1');
+
+export const gmail = google.gmail('v1').users;
