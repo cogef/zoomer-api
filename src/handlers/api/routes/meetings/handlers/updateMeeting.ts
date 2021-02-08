@@ -2,7 +2,9 @@ import { DateTime } from 'luxon';
 import { User } from '../../../../../utils/auth';
 import * as Calendar from '../../../../../utils/calendar';
 import * as DB from '../../../../../utils/db';
+import { MASTER_ZOOM_CAL_ID, ministries } from '../../../../../utils/general';
 import * as Zoom from '../../../../../utils/zoom';
+import * as Gmail from '../../../../../utils/gmail';
 import { attemptTo, HandlerResponse } from '../../../helpers';
 import { isAuthorized } from '../helpers';
 
@@ -11,12 +13,12 @@ export const updateMeeting = async (
   meetingID: string,
   meetingReq: Zoom.ZoomerMeetingRequest
 ): Promise<HandlerResponse> => {
-  const dbEvent = await DB.getMeeting(meetingID);
-  if (!dbEvent) {
+  const dbMeeting = await DB.getMeeting(meetingID);
+  if (!dbMeeting) {
     return { success: false, error: 'meeting not found in db', code: 404 };
   }
 
-  if (!isAuthorized(dbEvent.host.email, user.email!)) {
+  if (!isAuthorized(dbMeeting.host.email, user.email!)) {
     return { success: false, error: 'not authorized to access meeting', code: 401 };
   }
 
@@ -30,7 +32,7 @@ export const updateMeeting = async (
     ? Calendar.zoomToRFCRecurrence(meetingReq.recurrence, hourBefore)
     : undefined;
 
-  const oldAccount = accounts.find(acc => acc.email === dbEvent.zoomAccount);
+  const oldAccount = accounts.find(acc => acc.email === dbMeeting.zoomAccount);
   if (!oldAccount) {
     return {
       success: false,
@@ -40,7 +42,7 @@ export const updateMeeting = async (
   }
 
   const [delCalErr] = await attemptTo('remove old calendar event', () =>
-    Calendar.deleteEvent(oldAccount.calendarID, dbEvent.calendarEvents.zoomEventID)
+    Calendar.deleteEvent(oldAccount.calendarID, dbMeeting.calendarEvents.zoomEventID)
   );
   if (delCalErr) return delCalErr;
   //await Calendar.deleteEvent(leaderShip, dbEvent.calendarEvents.leadershipEventID);
@@ -85,18 +87,19 @@ export const updateMeeting = async (
     const zUser = _user!;
 
     const { host_key: hostKey } = zUser;
-    const hostJoinKey = dbEvent.hostJoinKey;
+    const hostJoinKey = dbMeeting.hostJoinKey;
 
-    const eventDesc =
-      `DO NOT MODIFY THIS EVENT\n` +
-      `-------------------------------\n\n` +
-      `${meetingReq.agenda}\n\n` +
-      `-------------------------------\n` +
-      `Scheduled by ${user.email} on ${account.email}\n` +
-      `Meeting ID: ${meeting.id}\n` +
-      `Password: ${meeting.password}\n` +
-      `Host Key: ${hostKey}\n` +
-      `Zoomer Host Join Key: ${hostJoinKey}\n`;
+    const eventDesc = [
+      `DO NOT MODIFY THIS EVENT`,
+      `-------------------------------\n`,
+      `${meetingReq.agenda}\n`,
+      `-------------------------------`,
+      `Scheduled by ${user.email} for ${ministries[meetingReq.ministry]} on ${account.email}`,
+      `Meeting ID: ${meeting.id}`,
+      `Password: ${meeting.password}`,
+      `Host Key: ${hostKey}`,
+      `Zoomer Host Join Key: ${hostJoinKey}`,
+    ].join('\n');
 
     const rrule = meetingReq.recurrence ? Calendar.zoomToRFCRecurrence(meetingReq.recurrence) : undefined;
 
@@ -109,6 +112,8 @@ export const updateMeeting = async (
         isSeudo: true as const,
       },
     ];
+
+    console.log({ occurrences, meeting });
 
     // actual start time might not fall into reccurrence
     const firstOccurStart = DateTime.fromISO(occurrences[0].start_time);
@@ -128,18 +133,19 @@ export const updateMeeting = async (
       'the meeting was canceled, please recreate.'
     );
     if (zCalErrResp) return zCalErrResp;
-    //const [leaderCalErr, leaderCalEventID] = await createEvent(leaderCal, eventReq);
-    //if (leaderCalErr !== null) {
-    //  return await handleError({ error: leaderCalErr, attemptingTo: 'add event to leadership calendar' }, async () => {
-    //  await Zoom.cancelMeeting(String(meeting.id));
-    //});
-    //}
-    const leaderCalEventID = '';
+
+    const [zMasterCalErrResp, zoomMasterCalEventID] = await attemptTo(
+      'update event in master zoom calendar',
+      async () => Calendar.updateEvent(MASTER_ZOOM_CAL_ID, dbMeeting.calendarEvents.masterEventID, eventReq),
+      () => Zoom.cancelMeeting(String(meeting.id)),
+      'the meeting was canceled, please recreate.'
+    );
+    if (zMasterCalErrResp) return zMasterCalErrResp;
 
     const [dbErrResp] = await attemptTo(
       'update meeting in database',
       async () => {
-        await DB.removeMeeting(dbEvent.meetingID);
+        await DB.removeMeeting(dbMeeting.meetingID);
         await DB.storeMeeting(
           {
             zoomAccount: account.email,
@@ -156,7 +162,7 @@ export const updateMeeting = async (
             },
             calendarEvents: {
               zoomEventID: zoomCalEventID!,
-              leadershipEventID: leaderCalEventID!,
+              masterEventID: zoomMasterCalEventID!,
             },
             reccurrence: rrule?.toText() || 'none',
           },
@@ -172,11 +178,30 @@ export const updateMeeting = async (
 
     if (dbErrResp) return dbErrResp;
 
+    const emailBody = await Gmail.renderMeetingCreated({
+      agenda: meeting.agenda,
+      dialIns: meeting.settings.global_dial_in_numbers,
+      host: user.displayName!,
+      hostJoinKey,
+      joinURL: meeting.join_url,
+      meetingID: meeting.id,
+      password: meeting.password,
+      reccurrence: rrule?.toText(),
+      startTime: meeting.start_time,
+      topic: meeting.topic,
+    });
+
+    const [emailErrResp] = await attemptTo('send confirmation email', () =>
+      Gmail.sendEmail(user.email!, `Zoom Meeting Updated - ${meeting.topic}`, emailBody)
+    );
+
+    if (emailErrResp) return emailErrResp;
+
     return { success: true, data: { meetingID: meeting.id, newMeeting: !usingOldAccount } };
   }
 
   const [restoreErr] = await attemptTo('restore calendar event after finding no free calendars', () =>
-    Calendar.restoreEvent(oldAccount.calendarID, dbEvent.calendarEvents.zoomEventID)
+    Calendar.restoreEvent(oldAccount.calendarID, dbMeeting.calendarEvents.zoomEventID)
   );
 
   if (restoreErr) return restoreErr;

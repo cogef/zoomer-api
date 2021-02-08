@@ -5,12 +5,12 @@ import { HandlerResponse } from '../../../helpers';
 import { isAuthorized } from '../helpers';
 
 export const getMeeting = async (user: User, meetingID: string): Promise<HandlerResponse> => {
-  const event = await DB.getMeeting(meetingID);
-  if (!event) {
+  const dbMeeting = await DB.getMeeting(meetingID);
+  if (!dbMeeting) {
     return { success: false, error: 'meeting not found in db', code: 404 };
   }
 
-  if (!isAuthorized(event.host.email, user.email!)) {
+  if (!isAuthorized(dbMeeting.host.email, user.email!)) {
     return { success: false, error: 'not authorized to access meeting', code: 401 };
   }
 
@@ -29,7 +29,7 @@ export const getMeeting = async (user: User, meetingID: string): Promise<Handler
     ...meeting,
     start_time: startTime ? startTime : meeting.start_time,
     duration: duration ? duration : meeting.duration,
-    ministry: event.host.ministry,
+    ministry: dbMeeting.host.ministry,
   };
 
   return { success: true, data: zoomerMeeting };

@@ -1,3 +1,5 @@
+import { MinistryKey } from '../general';
+
 export type ZoomMeetingRequest = {
   topic: string;
   type: 2 | 8; // 1 | 2 (scheduled) | 3 | 8 (recurring);
@@ -40,7 +42,7 @@ export type ZoomMeetingRequest = {
 };
 
 type ZoomerProps = {
-  ministry: string;
+  ministry: MinistryKey;
 };
 
 export type ZoomerMeetingRequest = ZoomerProps & ZoomMeetingRequest;
@@ -56,6 +58,15 @@ export type ZoomMeeting = {
   join_url: string;
   password: string;
   occurrences?: MeetingOccurance[];
+  settings: {
+    global_dial_in_numbers: {
+      country: string;
+      country_name: string;
+      city?: string;
+      number: string;
+      type: string;
+    }[];
+  };
 } & ZoomMeetingRequest;
 
 export type ZoomerMeeting = ZoomerProps & ZoomMeeting;

@@ -1,31 +1,56 @@
+<style>
+  section{
+    margin: 30px 0;
+  }
+  .title{
+    margin-bottom: 5px;
+  }
+  .dials{
+    margin-left: 20px;
+  }
+</style>
+
 <div>
-  Hello <%= host %>
-  <p>Below are the details for your scheduled Zoom call. <b>Remember</b> to always have your host key available.</p>
-  <br />
-  <p><b>Host Join Key:</b> <%= hostJoinKey %></p>
-  <p><b>Topic:</b> <%= topic %></p>
-  <p><b>Description:</b> <%= agenda %></p>
-  <p><b>Time:</b> <%= datetime %></p>
-  <p><b>Recurring</b> <% reccurrence ? `Yes - ${reccurrence}` : 'No' %></p>
-  <p>
-    <b>Join Zoom Meeting</b> <br />
-    <a>https://zoom.cogef.org/host-join?meetingID=<%= meetingID %> </a>
+  <p><b>Hello <%= host %>,</b></p>
+  <p>Below are the details for your scheduled Zoom call. <br/>
+    <b>Remember</b> to always have your host key available.
   </p>
-  <p><b>Meeting ID:</b> <%= meetingID %></p>
-  <p><b>Meeting Password</b> <%= password %></p>
-  <p>
-    <b>One tap mobile</b>
-    <br />
-    Example : +16465588656,,85317643909# US (New York)
-  </p>
-  <p>
-    Dial by your location<br />
-    +1 646 558 8656 US (New York)<br />
-    +1 301 715 8592 US (Washington D.C)<br />
-    +1 312 626 6799 US (Chicago)<br />
-    +1 669 900 9128 US (San Jose)<br />
-    +1 253 215 8782 US (Tacoma)<br />
-    +1 346 248 7799 US (Houston)<br />
-    Find your local number: <a href="https://us02web.zoom.us/u/kd14NMZo3R">https://us02web.zoom.us/u/kd14NMZo3R</a>
-  </p>
-</div>
+
+  <section>
+    <h2 class='title'><b>Host Details</b></h2>
+    <div>Only share these details with those you wish to grant host privileges to your meeting.</div>
+    <hr/>
+    <p><b>Host Join Key:</b> <%= hostJoinKey %></p>
+    <p>
+      <b>Join Zoom Meeting as Host</b> <br />
+      <% const hostJoinURL = `https://zoom.cogef.org/host-join?meetingID=${meetingID}&hostJoinKey=${hostJoinKey}`%>
+      <a href='<%= hostJoinURL %> '><%= hostJoinURL %></a>
+    </p>
+  </section>
+  
+  <section>
+    <h2 class='title'><b>Guest Details</b></h2>
+    <div>Share these details with your meeting guests.</div>
+    <hr/>
+    <p><b>Topic:</b> <%= topic %></p>
+    <p><b>Description:</b> <%= agenda %></p>
+    <p><b>Time:</b> <%= datetime %></p>
+    <p><b>Recurring</b> <%= reccurrence ? `Yes - ${reccurrence}` : 'No' %></p>
+    <p>
+      <b>Join Zoom Meeting</b> <br />
+      <a href='<%= joinURL %> '><%= joinURL %></a>
+    </p>
+    <p><b>Meeting ID:</b> <%= meetingID %></p>
+    <p><b>Meeting Password</b> <%= password %></p>
+    <p>
+      <div>Dial by your location</div>
+      <div class="dials">
+        <% for(let {number, country, state} of dialIns){ %> 
+          <%= number %> <%= country %> (<%= state %>)<br/>
+        <% } %> 
+      </div>
+      Find your local number: <a href="https://us02web.zoom.us/u/kd14NMZo3R">https://us02web.zoom.us/u/kd14NMZo3R</a>
+      </p>
+    </section>
+  </div>
+  
