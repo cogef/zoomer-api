@@ -47,6 +47,22 @@ export const createEvent = async (calendarID: string, event: EventReq) => {
   return res.data.id!;
 };
 
+export const updateEvent = async (calendarID: string, eventID: string, event: EventReq) => {
+  const rrule = event.recurrence;
+  const res = await calendar.events.update({
+    calendarId: calendarID,
+    eventId: eventID,
+    requestBody: {
+      summary: event.title,
+      description: event.description,
+      start: { dateTime: event.start, timeZone: timezone },
+      end: { dateTime: event.end, timeZone: timezone },
+      ...(rrule ? { recurrence: [rrule] } : {}),
+    },
+  });
+  return res.data.id!;
+};
+
 export const deleteEvent = async (calendarID: string, eventID: string) => {
   const res = await calendar.events.delete({
     calendarId: calendarID,

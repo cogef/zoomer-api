@@ -12,7 +12,9 @@ import { gmailTest } from './gmailTest';
 
 // Tests
 initGAPIs().then(
-  () => fullTest()
+  () =>
+    //
+    fullTest()
   //rruleTest()
   //calTest()
   //adminTest()

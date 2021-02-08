@@ -3,6 +3,8 @@ import randomString from 'randomstring';
 import { User } from '../../../../../utils/auth';
 import * as Calendar from '../../../../../utils/calendar';
 import * as DB from '../../../../../utils/db';
+import { MASTER_ZOOM_CAL_ID, ministries } from '../../../../../utils/general';
+import * as Gmail from '../../../../../utils/gmail';
 import * as Zoom from '../../../../../utils/zoom';
 import { attemptTo, HandlerResponse } from '../../../helpers';
 
@@ -44,16 +46,17 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
     const { host_key: hostKey } = zUser;
     const hostJoinKey = generateKey();
 
-    const eventDesc =
-      `DO NOT MODIFY THIS EVENT\n` +
-      `-------------------------------\n\n` +
-      `${meetingReq.agenda}\n\n` +
-      `-------------------------------\n` +
-      `Scheduled by ${user.email} on ${account.email}\n` +
-      `Meeting ID: ${meeting.id}\n` +
-      `Password: ${meeting.password}\n` +
-      `Host Key: ${hostKey}\n` +
-      `Zoomer Host Join Key: ${hostJoinKey}\n`;
+    const eventDesc = [
+      `DO NOT MODIFY THIS EVENT`,
+      `-------------------------------\n`,
+      `${meetingReq.agenda}\n`,
+      `-------------------------------`,
+      `Scheduled by ${user.email} for ${ministries[meetingReq.ministry]} on ${account.email}`,
+      `Meeting ID: ${meeting.id}`,
+      `Password: ${meeting.password}`,
+      `Host Key: ${hostKey}`,
+      `Zoomer Host Join Key: ${hostJoinKey}`,
+    ].join('\n');
 
     const rrule = meetingReq.recurrence ? Calendar.zoomToRFCRecurrence(meetingReq.recurrence) : undefined;
 
@@ -84,13 +87,13 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
       () => Zoom.cancelMeeting(String(meeting.id))
     );
     if (zCalErrResp) return zCalErrResp;
-    //const [leaderCalErr, leaderCalEventID] = await createEvent(leaderCal, eventReq);
-    //if (leaderCalErr !== null) {
-    //  return await handleError({ error: leaderCalErr, attemptingTo: 'add event to leadership calendar' }, async () => {
-    //  await Zoom.cancelMeeting(String(meeting.id));
-    //});
-    //}
-    const leaderCalEventID = '~' + Math.random();
+
+    const [zMasterCalErrResp, zoomMasterCalEventID] = await attemptTo(
+      'add event to master zoom calendar',
+      () => Calendar.createEvent(MASTER_ZOOM_CAL_ID, eventReq),
+      () => Zoom.cancelMeeting(String(meeting.id))
+    );
+    if (zMasterCalErrResp) return zMasterCalErrResp;
 
     const [dbErrResp] = await attemptTo(
       'add meeting to database',
@@ -111,7 +114,7 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
             },
             calendarEvents: {
               zoomEventID: zoomCalEventID!,
-              leadershipEventID: leaderCalEventID!,
+              masterEventID: zoomMasterCalEventID!,
             },
             reccurrence: rrule?.toText() || 'none',
           },
@@ -124,6 +127,25 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
     );
 
     if (dbErrResp) return dbErrResp;
+
+    const emailBody = await Gmail.renderMeetingCreated({
+      agenda: meeting.agenda,
+      dialIns: meeting.settings.global_dial_in_numbers,
+      host: user.displayName!,
+      hostJoinKey,
+      joinURL: meeting.join_url,
+      meetingID: meeting.id,
+      password: meeting.password,
+      reccurrence: rrule?.toText(),
+      startTime: meeting.start_time,
+      topic: meeting.topic,
+    });
+
+    const [emailErrResp] = await attemptTo('send confirmation email', () =>
+      Gmail.sendEmail(user.email!, `Zoom Meeting Scheduled - ${meeting.topic}`, emailBody)
+    );
+
+    if (emailErrResp) return emailErrResp;
 
     return { success: true, data: { meetingID: meeting.id, hostJoinKey }, code: 201 };
   }

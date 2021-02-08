@@ -4,6 +4,7 @@
   "description": "Zoomer API",
   "main": "handler.js",
   "dependencies": {
+    "areacodes": "^0.2.1",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "firebase-admin": "^9.4.2",

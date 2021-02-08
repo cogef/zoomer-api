@@ -34,7 +34,7 @@ const meetingReq2: ZoomerMeetingRequest = {
   recurrence: {
     type: 1,
     repeat_interval: 1,
-    end_date_time: '2021-02-26T04:57:00.000Z',
+    end_date_time: new Date('2/20/2021 11:59 PM').toISOString(),
   },
   settings: {
     host_video: false,
@@ -43,7 +43,7 @@ const meetingReq2: ZoomerMeetingRequest = {
     mute_upon_entry: true,
     waiting_room: false,
   },
-  start_time: '2021-01-24T23:30:00.000Z',
+  start_time: new Date('2/9/2021 2:00 PM').toISOString(),
   topic: 'Test Meeting Echo',
   type: 8,
 };
@@ -58,7 +58,7 @@ const meetingReq3: ZoomerMeetingRequest = {
     type: 3,
     repeat_interval: 1,
     monthly_week: -1,
-    monthly_week_day: 4,
+    monthly_week_day: 5,
     end_date_time: new Date('3/28/2021 11:59 PM').toISOString(),
   },
   settings: {
@@ -73,8 +73,8 @@ const meetingReq3: ZoomerMeetingRequest = {
   topic: 'Test Meeting Garden',
 };
 
-const meetingReq = meetingReq3;
-const meetingID = '98313795612';
+const meetingReq = meetingReq2;
+const meetingID = '93472282407';
 
 export const fullTest = async () => {
   await initGAPIs();
@@ -83,8 +83,8 @@ export const fullTest = async () => {
   try {
     //const res = await createMeeting(user, meetingReq);
     const res = await updateMeeting(user, meetingID, meetingReq);
-    //const res = await getMeeting(user, '92254150844');
-    //const res = await deleteMeeting(user, '92254150844');
+    //const res = await getMeeting(user, meetingID);
+    //const res = await deleteMeeting(user, meetingID);
     //const res = await getOccurrences(user, 'angel.campbell@cogef.org', {
     //  limit: 3,
     //  startDate: DateTime.local().startOf('day').toMillis(),

@@ -1,4 +1,5 @@
 import { firestore } from 'firebase-admin';
+import { MinistryKey } from '../general';
 import { MeetingOccurance } from '../zoom';
 
 export type MeetingInfo = {
@@ -10,13 +11,13 @@ export type MeetingInfo = {
   meetingID: string;
   hostJoinKey: string;
   host: {
-    ministry: string;
+    ministry: MinistryKey;
     email: string;
     name: string;
   };
   calendarEvents: {
     zoomEventID: string;
-    leadershipEventID: string;
+    masterEventID: string;
   };
   reccurrence?: string;
 };
