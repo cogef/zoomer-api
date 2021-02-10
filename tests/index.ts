@@ -14,11 +14,11 @@ import { gmailTest } from './gmailTest';
 initGAPIs().then(
   () =>
     //
-    fullTest()
-  //rruleTest()
-  //calTest()
-  //adminTest()
-  //gmailTest()
+    //fullTest()
+    //rruleTest()
+    //calTest()
+    //adminTest()
+    gmailTest()
   //freebusyTest()
   //adminTest()
   //zoomTest()
