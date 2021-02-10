@@ -66,7 +66,7 @@ const rfcWeekDay: Record<number, Weekday> = {
 const rruleDate = (dt: string) => {
   const date = DateTime.fromISO(dt).setZone(timezone);
   const year = date.year,
-    month = date.month,
+    month = date.month - 1,
     day = date.day,
     hours = date.hour,
     mins = date.minute;
