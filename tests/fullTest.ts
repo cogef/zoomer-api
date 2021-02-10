@@ -73,7 +73,7 @@ const meetingReq3: ZoomerMeetingRequest = {
   topic: 'Test Meeting Garden',
 };
 
-const meetingReq = meetingReq2;
+const meetingReq = meetingReq3;
 const meetingID = '93472282407';
 
 export const fullTest = async () => {

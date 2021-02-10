@@ -2,23 +2,30 @@ import { zoomToRFCRecurrence } from '../src/utils/calendar';
 import { renderMeetingCreated, sendEmail } from '../src/utils/gmail';
 import { ZoomerMeetingRequest } from '../src/utils/zoom';
 
-export const gmailTest = async () => {
-  const html = await renderMeetingCreated({
-    topic: meetingReq.topic,
-    agenda: meetingReq.agenda,
-    host: 'Angel Campbell',
-    hostJoinKey: '12323',
-    meetingID,
-    password: '1235124',
-    reccurrence: zoomToRFCRecurrence(meetingReq.recurrence!).toText(),
-    startTime: meetingReq.start_time,
-    joinURL: 'https://cogef-org.zoom.us/j/98313795612?pwd=emhVWWkremZHU2VlSHlIQ1ZmU2JUdz09',
-    dialIns: meeting.settings.global_dial_in_numbers,
-  });
+describe('confirmation email', () => {
+  test('creates email body', async () => {
+    const html = await renderMeetingCreated({
+      topic: meetingReq.topic,
+      agenda: meetingReq.agenda,
+      host: 'Angel Campbell',
+      hostJoinKey: '12322',
+      meetingID,
+      password: '1235124',
+      reccurrence: zoomToRFCRecurrence(meetingReq.recurrence!).toText(),
+      startTime: meetingReq.start_time,
+      joinURL: 'https://cogef-org.zoom.us/j/98313795612?pwd=emhVWWkremZHU2VlSHlIQ1ZmU2JUdz09',
+      dialIns: meeting.settings.global_dial_in_numbers,
+    });
 
-  const res = await sendEmail('angel.campbell@cogef.org', 'Testing5', html);
-  console.log({ res });
-};
+    expect(html).toContain(`https://zoom.cogef.org/host-join?meetingID=${meetingID}&amp;hostJoinKey=${12322}`);
+  });
+});
+
+//export const gmailTest = async () => {
+
+//  const res = await sendEmail('angel.campbell@cogef.org', 'Testing5', html);
+//  console.log({ res });
+//};
 
 const meetingReq3: ZoomerMeetingRequest = {
   agenda: 'Super important end of month stuff',
