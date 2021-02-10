@@ -64,16 +64,15 @@ const rfcWeekDay: Record<number, Weekday> = {
 
 // RRule wants you to use a +0 offset date with the local time
 const rruleDate = (dt: string) => {
-  const date = new Date(dt);
-  const year = date.getFullYear(),
-    month = date.getMonth(),
-    day = date.getDate(),
-    hours = date.getHours(),
-    mins = date.getMinutes();
+  const date = DateTime.fromISO(dt).setZone(timezone);
+  const year = date.year,
+    month = date.month,
+    day = date.day,
+    hours = date.hour,
+    mins = date.minute;
   return new Date(Date.UTC(year, month, day, hours, mins, 0));
 };
 
-/** Timezone of server */
-const timezone = DateTime.local().zoneName;
+const timezone = 'America/New_York';
 
 type Recurrence = Required<ZoomMeetingRequest>['recurrence'];
