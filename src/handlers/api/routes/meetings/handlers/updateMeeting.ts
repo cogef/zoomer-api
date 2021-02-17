@@ -94,7 +94,7 @@ export const updateMeeting = async (
       `-------------------------------\n`,
       `${meetingReq.agenda}\n`,
       `-------------------------------`,
-      `Scheduled by ${user.email} for ${ministries[meetingReq.ministry]} on ${account.email}`,
+      `Scheduled by ${dbMeeting.host.email} for ${ministries[meetingReq.ministry]} on ${account.email}`,
       `Meeting ID: ${meeting.id}`,
       `Password: ${meeting.password}`,
       `Host Key: ${hostKey}`,
@@ -156,8 +156,7 @@ export const updateMeeting = async (
             meetingID: String(meeting.id),
             hostJoinKey,
             host: {
-              name: user.displayName!,
-              email: user.email!,
+              ...dbMeeting.host,
               ministry: meetingReq.ministry,
             },
             calendarEvents: {
@@ -181,7 +180,7 @@ export const updateMeeting = async (
     const emailBody = await Gmail.renderMeetingCreated({
       agenda: meeting.agenda,
       dialIns: meeting.settings.global_dial_in_numbers,
-      host: user.displayName!,
+      host: dbMeeting.host.name,
       hostJoinKey,
       joinURL: meeting.join_url,
       meetingID: meeting.id,
@@ -192,7 +191,7 @@ export const updateMeeting = async (
     });
 
     const [emailErrResp] = await attemptTo('send confirmation email', () =>
-      Gmail.sendEmail(user.email!, `Zoom Meeting Updated - ${meeting.topic}`, emailBody)
+      Gmail.sendEmail(dbMeeting.host.email, `Zoom Meeting Updated - ${meeting.topic}`, emailBody)
     );
 
     if (emailErrResp) return emailErrResp;
