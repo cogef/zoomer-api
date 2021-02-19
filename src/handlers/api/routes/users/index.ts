@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { handleResponse } from '../../helpers';
-import { authenticate } from '../../middleware';
+import { authenticate, initializeGAPIs } from '../../middleware';
 import { getIsUserAdmin } from './handlers';
 
 const router = Router();
 
 router.use(authenticate);
+
+router.use(initializeGAPIs);
 
 router.get('/:key/isAdmin', (req, res) => {
   const { params, user } = req;
