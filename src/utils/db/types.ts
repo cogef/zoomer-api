@@ -35,7 +35,11 @@ export type StoredOccurrence = {
   meetingID: string;
   startDate: firestore.Timestamp;
   endDate: firestore.Timestamp;
-  hostEmail: string;
+  host: {
+    email: string;
+    name: string;
+    ministry: string;
+  };
   isSeudo: boolean;
   sequence: number;
   totalOccurrences: number;
