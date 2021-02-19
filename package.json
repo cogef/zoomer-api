@@ -41,6 +41,7 @@
   "scripts": {
     "test": "jest",
     "test:full": "tsnd --transpile-only tests",
+    "dev": "tsnd --transpile-only tests/runLocal.ts",
     "build": "serverless package",
     "lint": "tsc --noEmit",
     "deploy": "serverless deploy"

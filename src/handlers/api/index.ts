@@ -1,9 +1,12 @@
 import serverless from 'serverless-http';
 import express from 'express';
 import { MeetingsRouter, UsersRouter } from './routes';
-import { logRequest } from './middleware';
+import { dev, logRequest } from './middleware';
 
-const app = express();
+export const app = express();
+
+// allow local requests while running in development
+app.use('*', dev);
 
 // handle pre-flight requests
 app.options('*', (req, res) => {

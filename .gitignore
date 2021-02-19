@@ -8,7 +8,7 @@ jspm_packages
 
 # Env Vars
 .env
-.env.local
+.env.*
 
 # Secrets
 private
