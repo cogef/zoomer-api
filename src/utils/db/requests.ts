@@ -27,7 +27,11 @@ export const storeMeeting = async (event: MeetingInfo, occurs: OccurrenceInfo[])
       startDate: toTimestamp(startDate.toMillis()),
       endDate: toTimestamp(endDate.toMillis()),
       meetingID: event.meetingID,
-      hostEmail: event.host.email,
+      host: {
+        email: event.host.email,
+        name: event.host.name,
+        ministry: event.host.ministry,
+      },
       isSeudo: Boolean(occur.isSeudo),
       sequence: idx + 1,
       totalOccurrences: occurs.length, //TODO: Would rather store this on meeting doc, would require getOccur... refactor
@@ -63,11 +67,12 @@ export const removeMeeting = async (meetingID: string) => {
   await batch.commit();
 };
 
-export const getOccurrences = async (hostEmail: string, opts: OccursOptions) => {
-  let query = db
-    .collectionGroup('occurrences')
-    .where('hostEmail', '==', hostEmail)
-    .where('endDate', '>=', new Date(opts.startDate));
+export const getOccurrences = async (opts: OccursOptions) => {
+  let query = db.collectionGroup('occurrences').where('endDate', '>=', new Date(opts.startDate));
+
+  if (opts.hostEmail) {
+    query = query.where('host.email', '==', opts.hostEmail);
+  }
 
   if (opts.endDate) {
     query = query.where('endDate', '<=', new Date(opts.endDate));
@@ -98,6 +103,7 @@ export const getOccurrences = async (hostEmail: string, opts: OccursOptions) => 
 };
 
 type OccursOptions = {
+  hostEmail?: string;
   limit: number;
   startDate: number;
   endDate?: number;

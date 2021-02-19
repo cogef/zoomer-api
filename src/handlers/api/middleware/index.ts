@@ -28,3 +28,12 @@ export const logRequest: RequestHandler = (req, res, next) => {
   });
   next();
 };
+
+export const dev: RequestHandler = (req, res, next) => {
+  if (process.env.NODE_ENV === 'development') {
+    res.setHeader('access-control-allow-origin', '*');
+    res.setHeader('access-control-allow-methods', '*');
+    res.setHeader('access-control-allow-headers', '*');
+  }
+  next();
+};

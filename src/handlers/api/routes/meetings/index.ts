@@ -27,25 +27,26 @@ router.use(initializeGAPIs);
 
 router.get('/', (req, res) => {
   const { query, user } = req;
-  const { as, ...rest } = query;
-  if (as === 'occurrences') {
-    const hasLast = rest.lastMeetingID && rest.lastOccurrenceID;
-    const opts = {
-      limit: Number(rest.limit),
-      startDate: Number(rest.start),
-      end: rest.end ? Number(rest.end) : undefined,
+  if (query.as === 'occurrences') {
+    const hasLast = query.lastMeetingID && query.lastOccurrenceID;
+    const opts: Options = {
+      hostEmail: query.hostEmail ? String(query.hostEmail) : undefined,
+      limit: Number(query.limit),
+      startDate: Number(query.start),
+      endDate: query.end ? Number(query.end) : undefined,
       last: hasLast
         ? {
-            meetingID: String(rest.lastMeetingID),
-            occurrenceID: String(rest.lastOccurrenceID),
+            meetingID: String(query.lastMeetingID),
+            occurrenceID: String(query.lastOccurrenceID),
           }
         : undefined,
     };
-    const handler = () => getOccurrences(req.user!, user!.email!, opts);
+    const handler = () => getOccurrences(user!, opts);
     handleResponse(res, handler);
   } else {
     res.sendStatus(501); // Not Implemented (Get Meetings)
   }
+  type Options = Parameters<typeof getOccurrences>[1];
 });
 
 router.post('/', (req, res) => {

@@ -3,13 +3,18 @@ import { StoredMeeting } from '../../../../../utils/db';
 import { HandlerResponse } from '../../../helpers';
 import { isAuthorized } from '../helpers';
 import * as DB from '../../../../../utils/db';
+import { isAdmin } from '../../../../../utils/directory';
 
-export const getOccurrences = async (user: User, hostEmail: string, opts: Options): Promise<HandlerResponse> => {
-  if (!isAuthorized(hostEmail, user.email!)) {
+export const getOccurrences = async (user: User, opts: Options): Promise<HandlerResponse> => {
+  if (!opts.hostEmail) {
+    if (!isAdmin(user.email!)) {
+      return { success: false, error: 'not authorized', code: 401 };
+    }
+  } else if (!isAuthorized(opts.hostEmail, user.email!)) {
     return { success: false, error: 'not authorized', code: 401 };
   }
 
-  const occurrences = await DB.getOccurrences(hostEmail, opts);
+  const occurrences = await DB.getOccurrences(opts);
   const meetingIDs = occurrences.reduce((acc, occ) => {
     acc.add(occ.meetingID);
     return acc;
@@ -34,12 +39,4 @@ export const getOccurrences = async (user: User, hostEmail: string, opts: Option
   return { success: true, data: result };
 };
 
-type Options = {
-  last?: {
-    meetingID: string;
-    occurrenceID: string;
-  };
-  limit: number;
-  startDate: number;
-  endDate?: number;
-};
+type Options = Parameters<typeof DB.getOccurrences>[0];
