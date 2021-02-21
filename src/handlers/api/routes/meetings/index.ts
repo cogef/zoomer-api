@@ -34,6 +34,7 @@ router.get('/', (req, res) => {
       limit: Number(query.limit),
       startDate: Number(query.start),
       endDate: query.end ? Number(query.end) : undefined,
+      dir: query.dir as Options['dir'],
       last: hasLast
         ? {
             meetingID: String(query.lastMeetingID),
