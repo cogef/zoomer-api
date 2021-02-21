@@ -68,17 +68,23 @@ export const removeMeeting = async (meetingID: string) => {
 };
 
 export const getOccurrences = async (opts: OccursOptions) => {
-  let query = db.collectionGroup('occurrences').where('endDate', '>=', new Date(opts.startDate));
+  let query: firestore.Query = db.collectionGroup('occurrences');
 
-  if (opts.hostEmail) {
-    query = query.where('host.email', '==', opts.hostEmail);
+  if (opts.startDate) {
+    query = query.where('endDate', '>=', new Date(opts.startDate));
   }
 
   if (opts.endDate) {
     query = query.where('endDate', '<=', new Date(opts.endDate));
   }
 
-  query = query.orderBy('endDate');
+  if (opts.hostEmail) {
+    query = query.where('host.email', '==', opts.hostEmail);
+  }
+
+  if (opts.startDate || opts.endDate) {
+    query = query.orderBy('endDate', opts.dir);
+  }
 
   if (opts.last) {
     const occDoc = await db.doc(`meetings/${opts.last.meetingID}/occurrences/${opts.last.occurrenceID}`).get();
@@ -107,6 +113,7 @@ type OccursOptions = {
   limit: number;
   startDate: number;
   endDate?: number;
+  dir?: 'asc' | 'desc';
   last?: {
     meetingID: string;
     occurrenceID: string;
