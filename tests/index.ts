@@ -9,6 +9,7 @@ import { calTest } from './calendarTest';
 import { adminTest } from './isAdmin';
 import { initGAPIs } from '../src/services/googleapis';
 import { gmailTest } from './gmailTest';
+import { testGetZoomRecordings } from './zoomRecordings';
 
 // Tests
 initGAPIs().then(
@@ -18,7 +19,8 @@ initGAPIs().then(
     //rruleTest()
     //calTest()
     //adminTest()
-    gmailTest()
+    //gmailTest()
+    testGetZoomRecordings()
   //freebusyTest()
   //adminTest()
   //zoomTest()

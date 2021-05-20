@@ -69,7 +69,7 @@ export type ZoomMeeting = {
   };
 } & ZoomMeetingRequest;
 
-export type ZoomerMeeting = ZoomerProps & ZoomMeeting;
+export type ZoomerMeeting = ZoomerProps & ZoomMeeting & { share_url?: string | null };
 
 export type MeetingOccurance = {
   occurrence_id: string;
@@ -85,4 +85,31 @@ export type ZoomUser = {
   email: string;
   type: string;
   host_key: string;
+};
+
+export type ZoomMeetingRecording = {
+  uuid: string;
+  id: string;
+  account_id: string;
+  host_id: string;
+  topic: string;
+  start_time: string;
+  duration: number;
+  total_size: string;
+  type: '1' | '2' | '3' | '8';
+  recording_count: string;
+  share_url: string;
+  recording_files: {
+    id: string;
+    meeting_id: string;
+    recording_start: string;
+    recording_end: string;
+    file_type: string;
+    file_size: string;
+    play_url: string;
+    download_url: string;
+    status: string;
+    deleted_time: string;
+    recording_type: string;
+  };
 };

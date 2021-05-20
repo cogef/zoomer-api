@@ -1,6 +1,6 @@
 import { zoomRequest } from '../../services/zoom';
 import { stripFracSec } from '../general';
-import { ZoomMeeting, ZoomMeetingRequest, ZoomUser } from './types';
+import { ZoomMeeting, ZoomMeetingRecording, ZoomMeetingRequest, ZoomUser } from './types';
 
 export const getMeeting = (meetingID: string) => {
   try {
@@ -57,4 +57,16 @@ const cleanMeetingReq = (meetingReq: ZoomMeetingRequest) => {
     req.recurrence.end_date_time = stripFracSec(req.recurrence.end_date_time);
   }
   return req;
+};
+
+export const getMeetingRecordings = (meetingID: string) => {
+  return zoomRequest<ZoomMeetingRecording>({
+    path: `/meetings/${meetingID}/recordings`,
+  }).catch(err => {
+    if (err.status === 404) {
+      return null;
+    } else {
+      throw err;
+    }
+  });
 };
