@@ -1,0 +1,44 @@
+# This workflow will do a clean install of node dependencies, then use serverless framework to compile and build typescript and deploy to AWS
+
+name: prod-deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    environment: production
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Install serverless
+        run: npm i -D serverless
+
+      - name: Serverless build and deploy
+        run: serverless deploy --stage prod
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+          SA_PROJECT_ID: ${{ secrets.SA_PROJECT_ID }}
+          SA_PRIVATE_KEY_ID: ${{ secrets.SA_PRIVATE_KEY_ID }}
+          SA_PRIVATE_KEY: ${{ secrets.SA_PRIVATE_KEY }}
+          SA_CLIENT_EMAIL: ${{ secrets.SA_CLIENT_EMAIL }}
+          SA_CLIENT_ID: ${{ secrets.SA_CLIENT_ID }}
+          SA_AUTH_URI: ${{ secrets.SA_AUTH_URI }}
+          SA_TOKEN_URI: ${{ secrets.SA_TOKEN_URI }}
+          SA_AUTH_PROVIDER_X509_CERT_URL: ${{ secrets.SA_AUTH_PROVIDER_X509_CERT_URL }}
+          SA_CLIENT_X509_CERT_URL: ${{ secrets.SA_CLIENT_X509_CERT_URL }}
+          ZOOM_API_KEY: ${{ secrets.ZOOM_API_KEY }}
+          ZOOM_API_SECRET: ${{ secrets.ZOOM_API_SECRET }}
+          ZOOM_NOTIFICATION_TOKEN: ${{ secrets.ZOOM_NOTIFICATION_TOKEN }}

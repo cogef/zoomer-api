@@ -3,9 +3,9 @@ import { User } from '../../../../../utils/auth';
 import * as Calendar from '../../../../../utils/calendar';
 import * as DB from '../../../../../utils/db';
 import { MASTER_ZOOM_CAL_ID, ministries } from '../../../../../utils/general';
-import * as Zoom from '../../../../../utils/zoom';
 import * as Gmail from '../../../../../utils/gmail';
-import { attemptTo, HandlerResponse } from '../../../helpers';
+import * as Zoom from '../../../../../utils/zoom';
+import { attemptTo, HandlerResponse, HttpStatus } from '../../../helpers';
 import { isAuthorized } from '../helpers';
 
 export const updateMeeting = async (
@@ -15,11 +15,11 @@ export const updateMeeting = async (
 ): Promise<HandlerResponse> => {
   const dbMeeting = await DB.getMeeting(meetingID);
   if (!dbMeeting) {
-    return { success: false, error: 'meeting not found in db', code: 404 };
+    return { success: false, error: 'meeting not found in db', code: HttpStatus.NOT_FOUND };
   }
 
   if (!isAuthorized(dbMeeting.host.email, user.email!)) {
-    return { success: false, error: 'not authorized to access meeting', code: 401 };
+    return { success: false, error: 'not authorized to access meeting', code: HttpStatus.UNAUTHORIZED };
   }
 
   const startDT = meetingReq.start_time;
@@ -37,7 +37,7 @@ export const updateMeeting = async (
     return {
       success: false,
       error: 'Could not find the Zoom account this meeting was scheduled with.\nPlease contact webadmins@cogef.org',
-      code: 500,
+      code: HttpStatus.INTERNAL_SERVER_ERROR,
     };
   }
 
@@ -206,5 +206,5 @@ export const updateMeeting = async (
   if (restoreErr) return restoreErr;
 
   console.log('No calendars free');
-  return { success: false, error: 'no calendars free', code: 409 };
+  return { success: false, error: 'no calendars free', code: HttpStatus.CONFLICT };
 };

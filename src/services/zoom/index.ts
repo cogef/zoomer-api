@@ -1,9 +1,11 @@
 import jwt from 'jsonwebtoken';
 import fetch from 'node-fetch';
+import { env } from '../../env';
+import { HttpStatus } from '../../handlers/api/helpers';
 
 export const zoomRequest = async <T>(opts: Options) => {
-  const apiKey = process.env.ZOOM_API_KEY!;
-  const apiSecret = process.env.ZOOM_API_SECRET!;
+  const apiKey = env.ZOOM_API_KEY;
+  const apiSecret = env.ZOOM_API_SECRET;
 
   const jwtPayload = {
     iss: apiKey,
@@ -24,7 +26,7 @@ export const zoomRequest = async <T>(opts: Options) => {
 
   const status = res.status;
 
-  let body: T = status === 204 ? null : await res.json();
+  let body: T = status === HttpStatus.NO_CONTENT ? null : await res.json();
   if (status >= 400) {
     throw { context: 'zoom-request', status, error: body };
   }

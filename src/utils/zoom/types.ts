@@ -1,14 +1,17 @@
 import { MinistryKey } from '../general';
 
-export type ZoomMeetingRequest = {
+interface BaseZoomMeetingProps {
   topic: string;
   type: 2 | 8; // 1 | 2 (scheduled) | 3 | 8 (recurring);
   start_time: string; // [date-time];
   duration: number; // in mins
-  schedule_for?: never; // string;
-  timezone?: string;
   password: string;
   agenda: string; // description
+}
+
+export interface ZoomMeetingRequest extends BaseZoomMeetingProps {
+  schedule_for?: never; // string;
+  timezone?: string;
   recurrence?: {
     type: 1 | 2 | 3; // 1 (daily) | 2 (weekly) | 3 (monthly)
     repeat_interval: number;
@@ -39,11 +42,11 @@ export type ZoomMeetingRequest = {
     global_dial_in_countries?: never; //string[];
     registrants_email_notification?: never; // boolean;
   };
-};
+}
 
-type ZoomerProps = {
+interface ZoomerProps {
   ministry: MinistryKey;
-};
+}
 
 export type ZoomerMeetingRequest = ZoomerProps & ZoomMeetingRequest;
 
@@ -54,6 +57,7 @@ export type ZoomMeeting = {
   assistant_id?: string;
   host_email: string;
   created_at: string;
+  timezone: string;
   start_url: string;
   join_url: string;
   password: string;
@@ -71,23 +75,23 @@ export type ZoomMeeting = {
 
 export type ZoomerMeeting = ZoomerProps & ZoomMeeting & { share_url?: string | null };
 
-export type MeetingOccurance = {
+export interface MeetingOccurance {
   occurrence_id: string;
   start_time: string;
   duration: number;
   status: string;
-};
+}
 
-export type ZoomUser = {
+export interface ZoomUser {
   id: string;
   first_name: string;
   last_name: string;
   email: string;
   type: string;
   host_key: string;
-};
+}
 
-export type ZoomMeetingRecording = {
+export interface ZoomMeetingRecording {
   uuid: string;
   id: string;
   account_id: string;
@@ -112,4 +116,40 @@ export type ZoomMeetingRecording = {
     deleted_time: string;
     recording_type: string;
   };
-};
+}
+
+export interface ZoomEvent<T extends Object> {
+  event: string;
+  payload: {
+    account_id: string;
+    object: T;
+  };
+}
+
+export interface MeetingEndedObject {
+  uuid: string;
+  id: number;
+  host_id: number;
+  type: number;
+  topic: string;
+  start_time: string;
+  timezone: string;
+  /** Scheduled meeting duration */
+  duration: number;
+  end_time: string;
+}
+
+export interface ZoomMeetingInstance {
+  uuid: string;
+  id: number;
+  host_id: number;
+  type: number;
+  topic: string;
+  user_name: string;
+  user_email: string;
+  start_time: string;
+  end_time: string;
+  duration: number;
+  total_minutes: number;
+  participant_count: number;
+}

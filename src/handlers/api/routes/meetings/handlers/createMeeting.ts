@@ -6,7 +6,7 @@ import * as DB from '../../../../../utils/db';
 import { MASTER_ZOOM_CAL_ID, ministries } from '../../../../../utils/general';
 import * as Gmail from '../../../../../utils/gmail';
 import * as Zoom from '../../../../../utils/zoom';
-import { attemptTo, HandlerResponse } from '../../../helpers';
+import { attemptTo, HandlerResponse, HttpStatus } from '../../../helpers';
 
 export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRequest): Promise<HandlerResponse> => {
   const startDT = meetingReq.start_time;
@@ -147,11 +147,11 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
 
     if (emailErrResp) return emailErrResp;
 
-    return { success: true, data: { meetingID: meeting.id, hostJoinKey }, code: 201 };
+    return { success: true, data: { meetingID: meeting.id, hostJoinKey }, code: HttpStatus.CREATED };
   }
 
   console.log('No calendars free');
-  return { success: false, error: 'no calendars free', code: 409 };
+  return { success: false, error: 'no calendars free', code: HttpStatus.CONFLICT };
 };
 
 const generateKey = () => {

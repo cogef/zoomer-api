@@ -46,3 +46,11 @@ export type StoredOccurrence = {
 };
 
 export type ZoomAccount = { calendarID: string; sequence: number; email: string };
+
+export interface MeetingInstanceInfo extends Omit<MeetingInfo, 'reccurrence' | 'hostJoinKey'> {
+  uuid: string;
+  type: number;
+  topic: string;
+  duration: number;
+  participantCount: number;
+}

@@ -1,11 +1,11 @@
 import { google } from 'googleapis';
-import { credentials } from '../gcp';
+import { env } from '../../env';
 
 export const initGAPIs = async () => {
   const auth = new google.auth.GoogleAuth({
     credentials: {
-      client_email: credentials.SA_CLIENT_EMAIL,
-      private_key: credentials.SA_PRIVATE_KEY,
+      client_email: env.SA_CLIENT_EMAIL,
+      private_key: env.SA_PRIVATE_KEY,
     },
     // Scopes approved from GSuite Admin Console > Security > API Controls > DWD
     scopes: [

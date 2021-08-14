@@ -1,3 +1,4 @@
+import { HttpStatus } from '../../handlers/api/helpers';
 import { zoomRequest } from '../../services/zoom';
 import { stripFracSec } from '../general';
 import { ZoomMeeting, ZoomMeetingRecording, ZoomMeetingRequest, ZoomUser } from './types';
@@ -8,7 +9,7 @@ export const getMeeting = (meetingID: string) => {
       path: `/meetings/${meetingID}`,
     });
   } catch (err) {
-    if (err.status === 404) {
+    if (err.status === HttpStatus.NOT_FOUND) {
       return null;
     }
     throw err;
@@ -42,7 +43,7 @@ export const getUser = (userID: string) => {
   try {
     return zoomRequest<ZoomUser>({ path: `/users/${userID}` });
   } catch (err) {
-    if (err.status === 404) {
+    if (err.status === HttpStatus.NOT_FOUND) {
       return null;
     }
     throw err;
@@ -60,13 +61,21 @@ const cleanMeetingReq = (meetingReq: ZoomMeetingRequest) => {
 };
 
 export const getMeetingRecordings = (meetingID: string) => {
+  const instances = zoomRequest<any>({
+    path: `/past_meetings/${meetingID}/instances`,
+  }).catch(err => {
+    if (err.status === HttpStatus.NOT_FOUND) {
+      return null;
+    }
+    throw err;
+  });
+
   return zoomRequest<ZoomMeetingRecording>({
     path: `/meetings/${meetingID}/recordings`,
   }).catch(err => {
-    if (err.status === 404) {
+    if (err.status === HttpStatus.NOT_FOUND) {
       return null;
-    } else {
-      throw err;
     }
+    throw err;
   });
 };
