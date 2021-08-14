@@ -21,8 +21,8 @@ provider:
   lambdaHashingVersion: 20201221
   region: us-east-2
 
-  stage: dev
-  apiName: ${self:service}-${opt:stage, self:provider.stage}
+  stage: ${opt:stage, 'dev'}
+  apiName: ${self:service}-${self:provider.stage}
 
   environment:
     SA_PROJECT_ID: ${env:SA_PROJECT_ID}
@@ -34,10 +34,12 @@ provider:
     SA_TOKEN_URI: ${env:SA_TOKEN_URI}
     SA_AUTH_PROVIDER_X509_CERT_URL: ${env:SA_AUTH_PROVIDER_X509_CERT_URL}
     SA_CLIENT_X509_CERT_URL: ${env:SA_CLIENT_X509_CERT_URL}
+    SENTRY_DSN: ${env:SENTRY_DSN}
     ZOOM_API_KEY: ${env:ZOOM_API_KEY}
     ZOOM_API_SECRET: ${env:ZOOM_API_SECRET}
 
   httpApi:
+    name: ${self:service}-${self:provider.stage}
     cors:
       allowedOrigins: '*'
       allowedHeaders: '*'
