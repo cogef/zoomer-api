@@ -28,7 +28,7 @@ jobs:
         run: npm i -D serverless
 
       - name: Serverless build and deploy
-        run: serverless deploy --stage stage
+        run: npm run deploy -- --stage stage
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
