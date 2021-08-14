@@ -1,8 +1,8 @@
 /// <reference path='../../express.d.ts' />
 
 import { Router } from 'express';
+import { handleResponse, HttpStatus } from '../../helpers';
 import { authenticate, initializeGAPIs } from '../../middleware';
-import { handleResponse } from '../../helpers';
 import { createMeeting, deleteMeeting, getMeeting, getOccurrences } from './handlers';
 import { getStartURL } from './handlers/getStartURL';
 import { updateMeeting } from './handlers/updateMeeting';
@@ -45,7 +45,7 @@ router.get('/', (req, res) => {
     const handler = () => getOccurrences(user!, opts);
     handleResponse(res, handler);
   } else {
-    res.sendStatus(501); // Not Implemented (Get Meetings)
+    res.sendStatus(HttpStatus.NOT_IMPLEMENTED); // (Get Meetings)
   }
   type Options = Parameters<typeof getOccurrences>[1];
 });

@@ -1,17 +1,17 @@
 import { User } from '../../../../../utils/auth';
-import { StoredMeeting } from '../../../../../utils/db';
-import { HandlerResponse } from '../../../helpers';
-import { isAuthorized } from '../helpers';
 import * as DB from '../../../../../utils/db';
+import { StoredMeeting } from '../../../../../utils/db';
 import { isAdmin } from '../../../../../utils/directory';
+import { HandlerResponse, HttpStatus } from '../../../helpers';
+import { isAuthorized } from '../helpers';
 
 export const getOccurrences = async (user: User, opts: Options): Promise<HandlerResponse> => {
   if (!opts.hostEmail) {
     if (!isAdmin(user.email!)) {
-      return { success: false, error: 'not authorized', code: 401 };
+      return { success: false, error: 'not authorized', code: HttpStatus.UNAUTHORIZED };
     }
   } else if (!isAuthorized(opts.hostEmail, user.email!)) {
-    return { success: false, error: 'not authorized', code: 401 };
+    return { success: false, error: 'not authorized', code: HttpStatus.UNAUTHORIZED };
   }
 
   const occurrences = await DB.getOccurrences(opts);

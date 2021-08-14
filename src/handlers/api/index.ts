@@ -1,7 +1,10 @@
-import serverless from 'serverless-http';
+import Sentry from '@sentry/serverless';
 import express from 'express';
-import { MeetingsRouter, UsersRouter } from './routes';
+import serverless from 'serverless-http';
+import { env } from '../../env';
+import { HttpStatus } from './helpers';
 import { dev, logRequest } from './middleware';
+import { MeetingsRouter, NotificationsRouter, UsersRouter } from './routes';
 
 export const app = express();
 
@@ -10,7 +13,7 @@ app.use('*', dev);
 
 // handle pre-flight requests
 app.options('*', (req, res) => {
-  res.sendStatus(204); // No Content
+  res.sendStatus(HttpStatus.NO_CONTENT);
 });
 
 app.use(express.json());
@@ -21,8 +24,16 @@ app.use('/meetings', MeetingsRouter);
 
 app.use('/users', UsersRouter);
 
+app.use('/notifications', NotificationsRouter);
+
 app.all('*', (req, res) => {
-  res.sendStatus(404); // Not Found
+  res.sendStatus(HttpStatus.NOT_FOUND);
 });
 
-export const api = serverless(app);
+Sentry.AWSLambda.init({
+  dsn: env.SENTRY_DSN,
+  tracesSampleRate: env.NODE_ENV === 'development' ? 1 : 0.5,
+  environment: env.NODE_ENV,
+});
+
+export const api = Sentry.AWSLambda.wrapHandler(serverless(app));

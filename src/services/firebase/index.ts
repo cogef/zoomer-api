@@ -1,11 +1,11 @@
 import admin from 'firebase-admin';
-import { credentials } from '../gcp';
+import { env } from '../../env';
 
 admin.initializeApp({
   credential: admin.credential.cert({
-    clientEmail: credentials.SA_CLIENT_EMAIL,
-    projectId: credentials.SA_PROJECT_ID,
-    privateKey: credentials.SA_PRIVATE_KEY,
+    clientEmail: env.SA_CLIENT_EMAIL,
+    projectId: env.SA_PROJECT_ID,
+    privateKey: env.SA_PRIVATE_KEY,
   }),
 });
 

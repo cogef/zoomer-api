@@ -21,7 +21,7 @@ provider:
   lambdaHashingVersion: 20201221
   region: us-east-2
 
-  stage: prod
+  stage: dev
   apiName: ${self:service}-${opt:stage, self:provider.stage}
 
   environment:
