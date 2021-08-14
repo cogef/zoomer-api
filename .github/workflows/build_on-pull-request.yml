@@ -1,12 +1,9 @@
-# This workflow will do a clean install of node dependencies, then use serverless framework to compile and build typescript and deploy to AWS
+# This workflow will do a clean install of node dependencies, then use serverless framework to compile and build typescript
 
-name: dev-build
+name: Do a Build
 
 on:
-  push:
-    branches: [dev]
   pull_request:
-    branches: [dev]
 
 jobs:
   build:
@@ -15,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: dev
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Install dependencies
         run: npm i
@@ -25,3 +22,6 @@ jobs:
 
       - name: Run tests
         run: npm run test
+
+      - name: Build
+        run: npm run build

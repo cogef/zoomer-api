@@ -7,6 +7,7 @@ export const getUserFromToken = async (token?: string) => {
     const decoded = await auth.verifyIdToken(token);
     return await auth.getUser(decoded.uid);
   } catch (err) {
+    console.error({ getUserError: err });
     return;
   }
 };

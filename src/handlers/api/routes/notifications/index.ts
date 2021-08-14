@@ -16,4 +16,8 @@ router.post('/', (req, res) => {
   res.send('hi');
 });
 
+router.get('/', (req, res) => {
+  res.send('hi');
+});
+
 export const NotificationsRouter = router;

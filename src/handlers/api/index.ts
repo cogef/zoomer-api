@@ -1,4 +1,4 @@
-import Sentry from '@sentry/serverless';
+import * as Sentry from '@sentry/serverless';
 import express from 'express';
 import serverless from 'serverless-http';
 import { env } from '../../env';
