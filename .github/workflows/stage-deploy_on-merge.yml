@@ -32,7 +32,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+          NODE_ENV: staging
           SA_PROJECT_ID: ${{ secrets.SA_PROJECT_ID }}
           SA_PRIVATE_KEY_ID: ${{ secrets.SA_PRIVATE_KEY_ID }}
           SA_PRIVATE_KEY: ${{ secrets.SA_PRIVATE_KEY }}
@@ -42,6 +42,8 @@ jobs:
           SA_TOKEN_URI: ${{ secrets.SA_TOKEN_URI }}
           SA_AUTH_PROVIDER_X509_CERT_URL: ${{ secrets.SA_AUTH_PROVIDER_X509_CERT_URL }}
           SA_CLIENT_X509_CERT_URL: ${{ secrets.SA_CLIENT_X509_CERT_URL }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
           ZOOM_API_KEY: ${{ secrets.ZOOM_API_KEY }}
           ZOOM_API_SECRET: ${{ secrets.ZOOM_API_SECRET }}
           ZOOM_NOTIFICATION_TOKEN: ${{ secrets.ZOOM_NOTIFICATION_TOKEN }}
