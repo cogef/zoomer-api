@@ -1,3 +1,4 @@
+import { setUser } from '@sentry/serverless';
 import { RequestHandler } from 'express';
 import { inspect } from 'util';
 import { env } from '../../../env';
@@ -24,6 +25,14 @@ export const authenticate: RequestHandler = async (req, res, next) => {
   }
 
   req.user = user;
+
+  setUser({
+    id: user.uid,
+    username: user.displayName,
+    email: user.email,
+    ip_address: req.ip,
+  });
+
   next();
 };
 

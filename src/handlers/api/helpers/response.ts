@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/serverless';
 import { Response } from 'express';
 import { tryCatch } from '../../../utils/general';
 import { HttpStatus } from './http';
@@ -14,11 +15,13 @@ export const handleResponse = async (res: Response, handler: () => Promise<Handl
 
     if (result.code && result.code >= 500) {
       console.error({ CAUGHT_ERROR: result });
+      captureException(result);
     }
   } catch (err) {
     const error = err instanceof Error ? err.message : err;
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error, errorMessage: 'An unexpected server error occurred' });
     console.error({ UNCAUGHT_ERROR: err });
+    captureException(err);
   }
 };
 
