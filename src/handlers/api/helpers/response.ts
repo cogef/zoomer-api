@@ -15,7 +15,7 @@ export const handleResponse = async (res: Response, handler: () => Promise<Handl
 
     if (result.code && result.code >= 500) {
       console.error({ CAUGHT_ERROR: result });
-      captureException(result);
+      captureException(result.error);
     }
   } catch (err) {
     const error = err instanceof Error ? err.message : err;
