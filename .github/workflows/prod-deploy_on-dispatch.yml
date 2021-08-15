@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build_and_deploy:
     environment: production
     runs-on: ubuntu-latest
 
