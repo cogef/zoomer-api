@@ -8,15 +8,18 @@ import { toEasternDTString } from '../../general';
 const getFullPath = (relPath: string) => path.join(__dirname, relPath);
 
 export const renderMeetingCreated = async (params: Params) => {
-  // Add State to each Dial In Number
-  const _dialIns = (params.dialIns || []).reduce((acc, di) => {
-    acc[di.number] = getAreaCodeState(di.number);
-    return acc;
-  }, {} as Record<string, Promise<string>>);
-
   const dialIns = [];
-  for (let { number, country } of params.dialIns) {
-    dialIns.push({ number, country, state: await _dialIns[number] });
+
+  if (params.dialIns) {
+    // Add State to each Dial In Number
+    const dialInStates$ = params.dialIns.reduce((acc, di) => {
+      acc[di.number] = getAreaCodeState(di.number);
+      return acc;
+    }, {} as Record<string, Promise<string>>);
+
+    for (let { number, country } of params.dialIns) {
+      dialIns.push({ number, country, state: await dialInStates$[number] });
+    }
   }
 
   const datetime = toEasternDTString(params.startTime);
@@ -43,5 +46,5 @@ type Params = {
   password: string;
   startTime: string;
   joinURL: string;
-  dialIns: { number: string; country: string }[];
+  dialIns?: { number: string; country: string }[];
 };
