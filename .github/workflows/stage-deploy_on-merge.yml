@@ -32,6 +32,8 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          CALENDAR_OWNER_EMAIL: ${{ secrets.CALENDAR_OWNER_EMAIL }}
+          MASTER_ZOOM_CALENDAR_ID: ${{ secrets.MASTER_ZOOM_CALENDAR_ID }}
           NODE_ENV: staging
           SA_PROJECT_ID: ${{ secrets.SA_PROJECT_ID }}
           SA_PRIVATE_KEY_ID: ${{ secrets.SA_PRIVATE_KEY_ID }}

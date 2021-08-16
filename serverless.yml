@@ -25,6 +25,8 @@ provider:
   apiName: ${self:service}-${self:provider.stage}
 
   environment:
+    CALENDAR_OWNER_EMAIL: ${env:CALENDAR_OWNER_EMAIL}
+    MASTER_ZOOM_CALENDAR_ID: ${env:MASTER_ZOOM_CALENDAR_ID}
     NODE_ENV: ${env:NODE_ENV, 'development'}
     SA_PROJECT_ID: ${env:SA_PROJECT_ID}
     SA_PRIVATE_KEY_ID: ${env:SA_PRIVATE_KEY_ID}
