@@ -24,7 +24,7 @@
     <p>
       <b>Join Zoom Meeting as Host</b> <br />
       <% const hostJoinURL = `https://zoom.cogef.org/host-join?meetingID=${meetingID}&hostJoinKey=${hostJoinKey}`%>
-      <a href='<%= hostJoinURL %> '><%= hostJoinURL %></a>
+      <a href='<%= hostJoinURL %>'><%= hostJoinURL %></a>
     </p>
   </section>
   
@@ -33,15 +33,15 @@
     <div>Share these details with your meeting guests.</div>
     <hr/>
     <p><b>Topic:</b> <%= topic %></p>
-    <p><b>Description:</b> <%= agenda %></p>
+    <p><b>Description:</b> <%= agenda || '(No Description)'%></p>
     <p><b>Time:</b> <%= datetime %></p>
-    <p><b>Recurring</b> <%= reccurrence ? `Yes - ${reccurrence}` : 'No' %></p>
+    <p><b>Recurring:</b> <%= reccurrence ? `Yes - ${reccurrence}` : 'No' %></p>
     <p>
       <b>Join Zoom Meeting</b> <br />
-      <a href='<%= joinURL %> '><%= joinURL %></a>
+      <a href='<%= joinURL %>'><%= joinURL %></a>
     </p>
     <p><b>Meeting ID:</b> <%= meetingID %></p>
-    <p><b>Meeting Password</b> <%= password %></p>
+    <p><b>Meeting Password:</b> <%= password %></p>
     <p>
       <div>Dial by your location</div>
       <div class="dials">

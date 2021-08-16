@@ -1,6 +1,8 @@
 import 'dotenv/config';
 
 export const env = {
+  CALENDAR_OWNER_EMAIL: process.env.CALENDAR_OWNER_EMAIL || '',
+  MASTER_ZOOM_CALENDAR_ID: process.env.MASTER_ZOOM_CALENDAR_ID || '',
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: process.env.PORT || 8000,
   SA_PROJECT_ID: process.env.SA_PROJECT_ID || '',

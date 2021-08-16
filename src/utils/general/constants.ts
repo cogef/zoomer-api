@@ -1,3 +1,5 @@
+import { env } from '../../env';
+
 export const ministries = {
   cap: 'Communications and Promotions',
   media: 'Media',
@@ -18,6 +20,6 @@ export const ministries = {
   pastors: 'Pastors',
 };
 
-export const MASTER_ZOOM_CAL_ID = 'c_oa8gpfkh6mm3ost6p0stu6ak9k@group.calendar.google.com';
+export const MASTER_ZOOM_CAL_ID = env.MASTER_ZOOM_CALENDAR_ID;
 
 export type MinistryKey = keyof typeof ministries;

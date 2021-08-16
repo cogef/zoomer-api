@@ -45,7 +45,8 @@
     "dev": "tsnd --transpile-only tests/runLocal.ts",
     "build": "serverless package",
     "lint": "tsc --noEmit",
-    "deploy": "serverless deploy"
+    "deploy": "serverless deploy",
+    "loadData": "tsnd dev/loadData.ts"
   },
   "author": "Angel Campbell",
   "license": "ISC"

@@ -11,6 +11,7 @@
     "rootDir": "./",
     "esModuleInterop": true,
     "noImplicitAny": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "resolveJsonModule": true
   }
 }

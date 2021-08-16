@@ -17,7 +17,7 @@ export const initGAPIs = async () => {
     ],
     clientOptions: {
       // Impersonating Zoom Scheduler
-      subject: 'scheduler@cogef.org',
+      subject: env.CALENDAR_OWNER_EMAIL,
     },
   });
 

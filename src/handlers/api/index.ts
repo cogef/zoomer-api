@@ -30,10 +30,12 @@ app.all('*', (req, res) => {
   res.sendStatus(HttpStatus.NOT_FOUND);
 });
 
-Sentry.AWSLambda.init({
-  dsn: env.SENTRY_DSN,
-  tracesSampleRate: env.NODE_ENV === 'development' ? 1 : 0.5,
-  environment: env.NODE_ENV,
-});
+if (env.NODE_ENV !== 'development') {
+  Sentry.AWSLambda.init({
+    dsn: env.SENTRY_DSN,
+    tracesSampleRate: 0.5,
+    environment: env.NODE_ENV,
+  });
+}
 
 export const api = Sentry.AWSLambda.wrapHandler(serverless(app));
