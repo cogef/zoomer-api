@@ -1,7 +1,9 @@
 import 'dotenv/config';
 
 export const env = {
+  ARCHIVE_ZOOM_CALENDAR_ID: process.env.ARCHIVE_ZOOM_CALENDAR_ID || '',
   CALENDAR_OWNER_EMAIL: process.env.CALENDAR_OWNER_EMAIL || '',
+  FRONTEND_HOST: process.env.FRONTEND_HOST || 'http://localhost:3002',
   MASTER_ZOOM_CALENDAR_ID: process.env.MASTER_ZOOM_CALENDAR_ID || '',
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: process.env.PORT || 8000,

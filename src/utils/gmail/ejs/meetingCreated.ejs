@@ -23,7 +23,7 @@
     <p><b>Host Join Key:</b> <%= hostJoinKey %></p>
     <p>
       <b>Join Zoom Meeting as Host</b> <br />
-      <% const hostJoinURL = `https://zoom.cogef.org/host-join?meetingID=${meetingID}&hostJoinKey=${hostJoinKey}`%>
+      <% const hostJoinURL = `${FRONTEND_HOST}/host-join?meetingID=${meetingID}&hostJoinKey=${hostJoinKey}`%>
       <a href='<%= hostJoinURL %>'><%= hostJoinURL %></a>
     </p>
   </section>

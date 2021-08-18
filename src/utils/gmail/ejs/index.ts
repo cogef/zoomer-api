@@ -3,6 +3,7 @@
 import AreaCodes, { AreaCodeData } from 'areacodes';
 import ejs from 'ejs';
 import path from 'path';
+import { env } from '../../../env';
 import { toEasternDTString } from '../../general';
 
 const getFullPath = (relPath: string) => path.join(__dirname, relPath);
@@ -24,7 +25,12 @@ export const renderMeetingCreated = async (params: Params) => {
 
   const datetime = toEasternDTString(params.startTime);
 
-  return ejs.renderFile(getFullPath('./meetingCreated.ejs'), { ...params, datetime, dialIns });
+  return ejs.renderFile(getFullPath('./meetingCreated.ejs'), {
+    ...params,
+    datetime,
+    dialIns,
+    FRONTEND_HOST: env.FRONTEND_HOST,
+  });
 };
 
 const getAreaCodeState = async (tel: string) => {

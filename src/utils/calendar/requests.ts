@@ -82,6 +82,7 @@ export const restoreEvent = async (calendarID: string, eventID: string) => {
   return res.data;
 };
 
+// This doesn't matter, because the datetimes specify UTC, but the API requires a timezone
 const timezone = 'America/New_York';
 
 type ZoomCal = { calendarID: string; sequence: number };

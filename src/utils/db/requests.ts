@@ -2,7 +2,7 @@ import { firestore } from 'firebase-admin';
 import { DateTime } from 'luxon';
 import { db } from '../../services/firebase';
 import { MeetingInfo, StoredMeeting } from './';
-import { OccurrenceInfo, StoredOccurrence, ZoomAccount } from './types';
+import { OccurrenceInfo, StoredOccurrence, ZoomAccount, ZoomerMeetingInstance } from './types';
 
 export const storeMeeting = async (event: MeetingInfo, occurs: OccurrenceInfo[]) => {
   const batch = db.batch();
@@ -134,3 +134,22 @@ export const getZoomAccount = async (email: string) => {
 };
 
 const toTimestamp = (ts: number) => firestore.Timestamp.fromMillis(ts);
+
+export const storeZoomMeetingInstance = async (meeting: ZoomerMeetingInstance) => {
+  await db
+    .collection('pastMeetings')
+    // Not using meeting uuid because it may contain '/'s
+    .doc()
+    // Merging because I'm not sure 100% sure the events updating these docs
+    // (meeting.end / recording.completed) will occur sequentially
+    .set({ ...meeting }, { merge: true });
+};
+
+export const storeCloudRecording = async (uuid: string, share_url: string) => {
+  const snap = await db.collection('pastMeetings').where('uuid', '==', uuid).get();
+  if (snap.empty) {
+    throw new Error(`No meeting with uuid ${uuid} in database`);
+  }
+  const meetingRef = snap.docs[0].ref;
+  await meetingRef.update({ share_url });
+};

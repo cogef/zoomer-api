@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { env } from '../../../../env';
-import { HttpStatus } from '../../helpers';
+import { ZoomEvent } from '../../../../utils/zoom';
+import { handleResponse, HttpStatus } from '../../helpers';
+import { initializeGAPIs } from '../../middleware';
+import { storeMeetingInstance } from './handlers';
 
 const router = Router();
 
@@ -12,8 +15,14 @@ router.post('*', (req, res, next) => {
   next();
 });
 
+router.use(initializeGAPIs);
+
 router.post('/', (req, res) => {
-  res.send('hi');
+  const event: ZoomEvent = req.body;
+  if (event.event === 'meeting.ended') {
+    const handler = () => storeMeetingInstance(event.payload.object.uuid);
+    handleResponse(res, handler);
+  }
 });
 
 router.get('/', (req, res) => {

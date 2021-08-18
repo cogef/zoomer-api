@@ -9,6 +9,11 @@ jspm_packages
 # Env Vars
 .env
 .env.*
+*.env
+*.env.*
 
 # Secrets
 private
+
+# IDE
+.vscode
