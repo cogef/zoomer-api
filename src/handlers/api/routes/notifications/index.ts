@@ -3,8 +3,7 @@ import { env } from '../../../../env';
 import { ZoomEvent } from '../../../../utils/zoom';
 import { handleResponse, HttpStatus } from '../../helpers';
 import { initializeGAPIs } from '../../middleware';
-import { storeMeetingInstance } from './handlers';
-import { storeCloudRecording } from './handlers/storeCloudRecording';
+import { storeCloudRecording, storeMeetingInstance } from './handlers';
 
 const router = Router();
 

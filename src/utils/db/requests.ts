@@ -135,7 +135,7 @@ export const getZoomAccount = async (email: string) => {
 
 const toTimestamp = (ts: number) => firestore.Timestamp.fromMillis(ts);
 
-export const storeZoomMeetingInstance = async (meeting: ZoomerMeetingInstance) => {
+export const storeMeetingInstance = async (meeting: ZoomerMeetingInstance) => {
   await db
     .collection('pastMeetings')
     // Not using meeting uuid because it may contain '/'s, which are not allowed in Firestore
@@ -152,4 +152,10 @@ export const storeCloudRecording = async (uuid: string, share_url: string) => {
 
   const meetingRef = snap.docs[0].ref;
   await meetingRef.update({ share_url });
+};
+
+/** For Manual Trigger Only */
+export const __getAllMeetings = async () => {
+  const meetingRefs = await db.collection('meetings').get();
+  return meetingRefs.docs.map(doc => doc.data() as StoredMeeting);
 };

@@ -5,7 +5,10 @@ import { ministries } from '../../../../../utils/general';
 import * as Zoom from '../../../../../utils/zoom';
 import { attemptTo, HandlerResponse, HttpStatus } from '../../../helpers';
 
-export const storeMeetingInstance = async (meetingUUID: string): Promise<HandlerResponse> => {
+export const storeMeetingInstance = async (
+  meetingUUID: string,
+  __dbMeeting?: DB.StoredMeeting
+): Promise<HandlerResponse> => {
   const [meetingErr, meeting] = await attemptTo('get ended meeting', () => Zoom.getPastMeeting(meetingUUID));
   if (meetingErr) {
     return meetingErr;
@@ -15,14 +18,23 @@ export const storeMeetingInstance = async (meetingUUID: string): Promise<Handler
     return { success: false, error: 'Meeting not found by Zoom', code: HttpStatus.INTERNAL_SERVER_ERROR };
   }
 
-  const [dbMeetingErr, dbMeeting] = await attemptTo('get meeting from db', () => DB.getMeeting(String(meeting.id)));
-  if (dbMeetingErr) {
-    return dbMeetingErr;
+  let tmpDbMeeting: DB.StoredMeeting;
+
+  if (!__dbMeeting) {
+    const [dbMeetingErr, dbMeeting] = await attemptTo('get meeting from db', () => DB.getMeeting(String(meeting.id)));
+    if (dbMeetingErr) {
+      return dbMeetingErr;
+    }
+
+    if (!dbMeeting) {
+      return { success: false, error: 'Meeting not found in Database', code: HttpStatus.INTERNAL_SERVER_ERROR };
+    }
+    tmpDbMeeting = dbMeeting;
+  } else {
+    tmpDbMeeting = __dbMeeting;
   }
 
-  if (!dbMeeting) {
-    return { success: false, error: 'Meeting not found in Database', code: HttpStatus.INTERNAL_SERVER_ERROR };
-  }
+  const dbMeeting = tmpDbMeeting;
 
   const eventDesc = [
     `DO NOT MODIFY THIS EVENT`,
@@ -53,9 +65,7 @@ export const storeMeetingInstance = async (meetingUUID: string): Promise<Handler
     calendarEventId: eventID || '',
   };
 
-  const [zMeetingErr] = await attemptTo('store meeting instance', () =>
-    DB.storeZoomMeetingInstance(zoomerMeetingInstance)
-  );
+  const [zMeetingErr] = await attemptTo('store meeting instance', () => DB.storeMeetingInstance(zoomerMeetingInstance));
 
   if (zMeetingErr) {
     return zMeetingErr;

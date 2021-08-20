@@ -4,7 +4,7 @@ import serverless from 'serverless-http';
 import { env } from '../../env';
 import { HttpStatus } from './helpers';
 import { dev, logRequest } from './middleware';
-import { MeetingsRouter, NotificationsRouter, UsersRouter } from './routes';
+import { MeetingsRouter, NotificationsRouter, TriggersRouter, UsersRouter } from './routes';
 
 export const app = express();
 
@@ -25,6 +25,8 @@ app.use('/meetings', MeetingsRouter);
 app.use('/users', UsersRouter);
 
 app.use('/notifications', NotificationsRouter);
+
+app.use('/triggers', TriggersRouter);
 
 app.all('*', (req, res) => {
   res.sendStatus(HttpStatus.NOT_FOUND);

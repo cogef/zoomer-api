@@ -11,6 +11,7 @@ export const env = {
   SA_PRIVATE_KEY: (process.env.SA_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
   SA_CLIENT_EMAIL: process.env.SA_CLIENT_EMAIL || '',
   SENTRY_DSN: process.env.SENTRY_DSN || '',
+  TRIGGER_TOKEN: process.env.TRIGGER_TOKEN || '',
   ZOOM_API_KEY: process.env.ZOOM_API_KEY || '',
   ZOOM_API_SECRET: process.env.ZOOM_API_SECRET || '',
   ZOOM_NOTIFICATION_TOKEN: process.env.ZOOM_NOTIFICATION_TOKEN || '',
