@@ -9,6 +9,10 @@ import { updateMeeting } from './handlers/updateMeeting';
 
 const router = Router();
 
+router.get('/x-status', (req, res) => {
+  res.send('active');
+});
+
 router.post('/:id/start_url', (req, res) => {
   const { params, body } = req;
   const handler = () => getStartURL(params.id, { hostJoinKey: body.hostJoinKey });

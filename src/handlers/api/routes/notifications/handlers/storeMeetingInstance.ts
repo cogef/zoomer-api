@@ -68,5 +68,3 @@ export const storeMeetingInstance = async (meetingUUID: string): Promise<Handler
 
   return { success: true, data: {}, code: HttpStatus.NO_CONTENT };
 };
-
-// Get share url (not in this handler)

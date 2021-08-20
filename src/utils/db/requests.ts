@@ -138,18 +138,18 @@ const toTimestamp = (ts: number) => firestore.Timestamp.fromMillis(ts);
 export const storeZoomMeetingInstance = async (meeting: ZoomerMeetingInstance) => {
   await db
     .collection('pastMeetings')
-    // Not using meeting uuid because it may contain '/'s
+    // Not using meeting uuid because it may contain '/'s, which are not allowed in Firestore
     .doc()
-    // Merging because I'm not sure 100% sure the events updating these docs
-    // (meeting.end / recording.completed) will occur sequentially
-    .set({ ...meeting }, { merge: true });
+    .create({ ...meeting });
 };
 
 export const storeCloudRecording = async (uuid: string, share_url: string) => {
   const snap = await db.collection('pastMeetings').where('uuid', '==', uuid).get();
+
   if (snap.empty) {
     throw new Error(`No meeting with uuid ${uuid} in database`);
   }
+
   const meetingRef = snap.docs[0].ref;
   await meetingRef.update({ share_url });
 };
