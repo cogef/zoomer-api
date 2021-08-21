@@ -2,14 +2,13 @@ import { HttpStatus } from '../../handlers/api/helpers';
 import { zoomRequest } from '../../services/zoom';
 import { stripFracSec } from '../general';
 import {
+  UserRecordings,
   ZoomMeeting,
   ZoomMeetingInstance,
   ZoomMeetingInstanceList,
-  ZoomMeetingRecording,
   ZoomMeetingRequest,
   ZoomUser,
 } from './types';
-import { encodeUUID } from './utils';
 
 export const getMeeting = async (meetingID: string) => {
   try {
@@ -70,11 +69,8 @@ const cleanMeetingReq = (meetingReq: ZoomMeetingRequest) => {
 
 export const getPastMeeting = async (meetingUUID: string) => {
   try {
-    // Double encoding is required when UUID begins with '/' or contains '//'
-    // Ref: https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/pastmeetingdetails
-    const cleanUUID = encodeUUID(meetingUUID);
     return await zoomRequest<ZoomMeetingInstance>({
-      path: `/past_meetings/${cleanUUID}`,
+      path: `/past_meetings/${encodeUUID(meetingUUID)}`,
     });
   } catch (err) {
     if (err.status === HttpStatus.NOT_FOUND) {
@@ -84,10 +80,10 @@ export const getPastMeeting = async (meetingUUID: string) => {
   }
 };
 
-export const getMeetingRecordings = async (meetingID: string) => {
+export const getUserRecordings = async (userID: string) => {
   try {
-    return await zoomRequest<ZoomMeetingRecording>({
-      path: `/meetings/${meetingID}/recordings`,
+    return await zoomRequest<UserRecordings>({
+      path: `/users/${userID}/recordings`,
     });
   } catch (err) {
     if (err.status === HttpStatus.NOT_FOUND) {
@@ -108,4 +104,12 @@ export const getPastMeetingInstances = async (meetingID: string) => {
     }
     throw err;
   }
+};
+
+/** Double encoding is required when UUID begins with '/' or contains '//'
+ *
+ * Ref: https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/pastmeetingdetails
+ */
+const encodeUUID = (uuid: string) => {
+  return encodeURIComponent(encodeURIComponent(uuid));
 };

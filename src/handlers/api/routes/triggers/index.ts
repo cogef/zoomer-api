@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { env } from '../../../../env';
 import { handleResponse, HttpStatus } from '../../helpers';
 import { initializeGAPIs } from '../../middleware';
-import { storeAllMeetingInstances } from './handlers';
+import { storeAllCloudRecordings, storeAllMeetingInstances } from './handlers';
 
 const router = Router();
 
@@ -27,6 +27,11 @@ router.use(initializeGAPIs);
 
 router.post('/store-all-meeting-instances', (req, res) => {
   const handler = () => storeAllMeetingInstances();
+  handleResponse(res, handler);
+});
+
+router.post('/store-all-cloud-recordings', (req, res) => {
+  const handler = () => storeAllCloudRecordings();
   handleResponse(res, handler);
 });
 

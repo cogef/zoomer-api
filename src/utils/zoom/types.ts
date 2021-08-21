@@ -118,6 +118,16 @@ export interface ZoomMeetingRecording {
   }[];
 }
 
+export interface UserRecordings {
+  from: string;
+  to: string;
+  page_count: number;
+  page_size: number;
+  total_records: number;
+  next_page_token: string;
+  meetings: ZoomMeetingRecording[];
+}
+
 interface BaseZoomEvent<T extends Object> {
   event: string;
   payload: {

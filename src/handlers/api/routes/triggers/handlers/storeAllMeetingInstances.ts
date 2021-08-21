@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/serverless';
 import * as DB from '../../../../../utils/db';
 import * as Zoom from '../../../../../utils/zoom';
 import { attemptTo, HandlerResponse } from '../../../helpers';
@@ -8,6 +9,7 @@ export const storeAllMeetingInstances = async (): Promise<HandlerResponse> => {
 
   const [dbMeetingErr, dbMeetings] = await attemptTo('get all meetings from database', () => DB.__getAllMeetings());
   if (dbMeetingErr) {
+    captureException(dbMeetingErr.error);
     return dbMeetingErr;
   }
 
@@ -21,15 +23,31 @@ export const storeAllMeetingInstances = async (): Promise<HandlerResponse> => {
 
       if (instanceListErr) {
         console.error(instanceListErr);
+        captureException(instanceListErr.error);
         return;
       }
 
+      // Utilizing notification handler to store meeting instances
       await Promise.all(
-        // Utilizing notification handler to store meeting instances
         instanceList!.meetings.map(async ({ uuid }) => {
+          const [dbInstanceErr, dbInstance] = await attemptTo(`get meeting instance ${uuid} from database`, () =>
+            DB.getMeetingInstance(uuid)
+          );
+
+          if (dbInstanceErr) {
+            console.error(dbInstanceErr);
+            captureException(dbInstanceErr.error);
+            return;
+          }
+
+          if (dbInstance) {
+            return;
+          }
+
           const resp = await storeMeetingInstance(uuid, dbMeeting);
           if (!resp.success) {
             console.error(resp);
+            captureException(resp.error);
           } else {
             instanceCount++;
           }

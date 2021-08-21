@@ -93,17 +93,6 @@ export const getOccurrences = async (opts: OccursOptions) => {
 
   query = query.limit(opts.limit);
 
-  //TODO: Get meeting doc for each meeting to create following result:
-  /*
-  {
-    [meetingID]:{
-      ...StoredMeeting,
-      occurrences: StoredOccurrence[]
-    }
-  }
-  */
-  // Also: limit requests and accept a lastOccurrenceID param
-
   const occurs = (await query.get()).docs.map(d => d.data() as StoredOccurrence);
   return occurs;
 };
@@ -136,22 +125,16 @@ export const getZoomAccount = async (email: string) => {
 const toTimestamp = (ts: number) => firestore.Timestamp.fromMillis(ts);
 
 export const storeMeetingInstance = async (meeting: ZoomerMeetingInstance) => {
-  await db
-    .collection('pastMeetings')
-    // Not using meeting uuid because it may contain '/'s, which are not allowed in Firestore
-    .doc()
-    .create({ ...meeting });
+  await db.collection('pastMeetings').doc(encodeUUID(meeting.uuid)).create(meeting);
 };
 
 export const storeCloudRecording = async (uuid: string, share_url: string) => {
-  const snap = await db.collection('pastMeetings').where('uuid', '==', uuid).get();
+  await db.collection('pastMeetings').doc(encodeUUID(uuid)).update({ share_url });
+};
 
-  if (snap.empty) {
-    throw new Error(`No meeting with uuid ${uuid} in database`);
-  }
-
-  const meetingRef = snap.docs[0].ref;
-  await meetingRef.update({ share_url });
+export const getMeetingInstance = async (uuid: string) => {
+  const meetingDoc = await db.collection('pastMeetings').doc(encodeUUID(uuid)).get();
+  return meetingDoc.data() as ZoomerMeetingInstance | undefined;
 };
 
 /** For Manual Trigger Only */
@@ -159,3 +142,6 @@ export const __getAllMeetings = async () => {
   const meetingRefs = await db.collection('meetings').get();
   return meetingRefs.docs.map(doc => doc.data() as StoredMeeting);
 };
+
+// Zoom UUIDs may contain '/'s, which are not allowed in Firestore document IDs
+const encodeUUID = (uuid: string) => uuid.replace(/\//g, '__');
