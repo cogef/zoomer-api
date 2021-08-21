@@ -1,6 +1,6 @@
 import { firestore } from 'firebase-admin';
 import { MinistryKey } from '../general';
-import { MeetingOccurance, ZoomMeetingInstance } from '../zoom';
+import { MeetingOccurance, RecurringMeeting, SingleMeeting, ZoomMeetingInstance } from '../zoom';
 
 interface ZoomerProps {
   zoomAccount: string;
@@ -11,6 +11,16 @@ interface ZoomerProps {
     name: string;
   };
 }
+
+interface BaseZoomerMeeting {
+  host: ZoomerProps['host'];
+  share_url?: string | null;
+}
+
+interface SingleZoomerMeeting extends SingleMeeting, BaseZoomerMeeting {}
+interface RecurringZoomerMeeting extends RecurringMeeting, BaseZoomerMeeting {}
+
+export type ZoomerMeeting = SingleZoomerMeeting | RecurringZoomerMeeting;
 
 export interface ZoomerMeetingInstance
   extends Omit<ZoomMeetingInstance, 'start_time' | 'end_time'>,

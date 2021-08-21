@@ -137,7 +137,7 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
       meetingID: meeting.id,
       password: meeting.password,
       reccurrence: rrule?.toText(),
-      startTime: meeting.start_time,
+      startTime: occurrences[0].start_time,
       topic: meeting.topic,
     });
 

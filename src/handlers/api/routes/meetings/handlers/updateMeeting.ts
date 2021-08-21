@@ -186,7 +186,7 @@ export const updateMeeting = async (
       meetingID: meeting.id,
       password: meeting.password,
       reccurrence: rrule?.toText(),
-      startTime: meeting.start_time,
+      startTime: occurrences[0].start_time,
       topic: meeting.topic,
     });
 

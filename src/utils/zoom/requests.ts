@@ -58,10 +58,11 @@ export const getUser = async (userID: string) => {
   }
 };
 
+// Zoom bugs out when given fractional seconds
 const cleanMeetingReq = (meetingReq: ZoomMeetingRequest) => {
   const req = JSON.parse(JSON.stringify(meetingReq)) as ZoomMeetingRequest;
-  // Zoom bugs out when given fractional seconds
   req.start_time = stripFracSec(req.start_time);
+
   if (req.recurrence?.end_date_time) {
     req.recurrence.end_date_time = stripFracSec(req.recurrence.end_date_time);
   }

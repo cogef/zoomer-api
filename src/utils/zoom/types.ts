@@ -1,27 +1,18 @@
 import { MinistryKey } from '../general';
 
-interface BaseZoomMeetingProps {
+// -
+
+// type BaseMeeting = BaseSingleMeeting | BaseRecurringMeeting;
+
+interface BaseMeetingRequest {
   topic: string;
-  type: 2 | 8; // 1 | 2 (scheduled) | 3 | 8 (recurring);
+  type: number; // 1 | 2 (scheduled) | 3 | 8 (recurring);
   start_time: string; // [date-time];
   duration: number; // in mins
+  schedule_for?: never;
+  timezone?: never;
   password: string;
   agenda: string; // description
-}
-
-export interface ZoomMeetingRequest extends BaseZoomMeetingProps {
-  schedule_for?: never; // string;
-  timezone?: string;
-  recurrence?: {
-    type: 1 | 2 | 3; // 1 (daily) | 2 (weekly) | 3 (monthly)
-    repeat_interval: number;
-    weekly_days?: string;
-    monthly_day?: number;
-    monthly_week?: -1 | 1 | 2 | 3 | 4;
-    monthly_week_day?: number;
-    end_times?: number;
-    end_date_time?: string; //  [date-time];
-  };
   settings: {
     host_video: boolean;
     participant_video: boolean;
@@ -35,8 +26,6 @@ export interface ZoomMeetingRequest extends BaseZoomMeetingProps {
     registration_type?: never; // 1  | 2 | 3;
     audio?: never; //'both' (default) | 'telephony' | 'voip';
     auto_recording?: 'local'; //'local' | 'cloud' | 'none';
-    enforce_login?: never; // boolean;
-    enforce_login_domains?: never; // string;
     alternative_hosts?: never; // string;
     waiting_room: boolean;
     global_dial_in_countries?: never; //string[];
@@ -44,25 +33,46 @@ export interface ZoomMeetingRequest extends BaseZoomMeetingProps {
   };
 }
 
+interface SingleMeetingRequest extends BaseMeetingRequest {
+  recurrence?: never;
+}
+
+interface RecurringMeetingRequest extends BaseMeetingRequest {
+  recurrence?: {
+    type: 1 | 2 | 3; // 1 (daily) | 2 (weekly) | 3 (monthly)
+    repeat_interval: number;
+    weekly_days?: string;
+    monthly_day?: number;
+    monthly_week?: -1 | 1 | 2 | 3 | 4;
+    monthly_week_day?: number;
+    end_times?: number;
+    end_date_time?: string; //  [date-time];
+  };
+}
+
+export type ZoomMeetingRequest = SingleMeetingRequest | RecurringMeetingRequest;
+
 interface ZoomerProps {
   ministry: MinistryKey;
 }
 
 export type ZoomerMeetingRequest = ZoomerProps & ZoomMeetingRequest;
 
-export type ZoomMeeting = {
+interface BaseMeeting<T extends ZoomMeetingRequest>
+  extends Omit<BaseMeetingRequest, 'schedule_for' | 'start_time' | 'timezone'> {
   uuid: string;
   id: number;
   host_id: string;
-  assistant_id?: string;
+  assistant_id?: string; // [schedule_for from request]
   host_email: string;
   created_at: string;
   timezone: string;
   start_url: string;
   join_url: string;
   password: string;
-  occurrences?: MeetingOccurance[];
-  settings: {
+  recurrence?: T['recurrence'];
+  // occurrences?: MeetingOccurance[];
+  settings: BaseMeetingRequest['settings'] & {
     global_dial_in_numbers: {
       country: string;
       country_name: string;
@@ -71,9 +81,21 @@ export type ZoomMeeting = {
       type: string;
     }[];
   };
-} & ZoomMeetingRequest;
+}
 
-export type ZoomerMeeting = ZoomerProps & ZoomMeeting & { share_url?: string | null };
+export interface SingleMeeting extends BaseMeeting<SingleMeetingRequest> {
+  type: 2;
+  start_time: string;
+  occurrences?: never;
+}
+
+export interface RecurringMeeting extends BaseMeeting<RecurringMeetingRequest> {
+  type: 3;
+  start_time?: never;
+  occurrences: MeetingOccurance[];
+}
+
+export type ZoomMeeting = SingleMeeting | RecurringMeeting;
 
 export interface MeetingOccurance {
   occurrence_id: string;
@@ -171,7 +193,11 @@ export interface RecordingCompletedEvent
   event: 'recording.completed';
 }
 
-export type ZoomEvent = MeetingEndedEvent | RecordingCompletedEvent | { event: 'unsupported' };
+export interface UnsupportedEvent extends BaseZoomEvent<any> {
+  event: 'unsupported';
+}
+
+export type ZoomEvent = MeetingEndedEvent | RecordingCompletedEvent | UnsupportedEvent;
 
 export interface ZoomMeetingInstance {
   uuid: string;

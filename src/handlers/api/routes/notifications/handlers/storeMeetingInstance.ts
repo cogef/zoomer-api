@@ -42,7 +42,7 @@ export const storeMeetingInstance = async (
     `${dbMeeting.description}\n`,
     `-------------------------------`,
     `Meeting ID: ${meeting.id}`,
-    `Participants: ${meeting.participants_count}`,
+    `Participants: ${meeting.participants_count} (includes reconnects)`,
     `Scheduled by ${dbMeeting.host.name} for ${ministries[dbMeeting.host.ministry]} on ${dbMeeting.zoomAccount}`,
   ].join('\n');
 

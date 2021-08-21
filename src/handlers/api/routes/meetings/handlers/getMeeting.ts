@@ -25,13 +25,12 @@ export const getMeeting = async (user: User, meetingID: string): Promise<Handler
   const startTime = firstOccur?.start_time;
   const duration = firstOccur?.duration;
 
-  const zoomerMeeting: Zoom.ZoomerMeeting = {
+  const zoomerMeeting = {
     ...meeting,
     start_time: startTime ? startTime : meeting.start_time,
     duration: duration ? duration : meeting.duration,
-    ministry: dbMeeting.host.ministry,
+    host: dbMeeting.host,
     share_url: (await Zoom.getMeetingRecordings(meetingID))?.share_url,
-  };
-
+  } as DB.ZoomerMeeting;
   return { success: true, data: zoomerMeeting };
 };
