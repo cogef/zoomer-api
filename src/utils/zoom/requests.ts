@@ -6,6 +6,7 @@ import {
   ZoomMeeting,
   ZoomMeetingInstance,
   ZoomMeetingInstanceList,
+  ZoomMeetingRecording,
   ZoomMeetingRequest,
   ZoomUser,
 } from './types';
@@ -84,6 +85,20 @@ export const getUserRecordings = async (userID: string) => {
   try {
     return await zoomRequest<UserRecordings>({
       path: `/users/${userID}/recordings`,
+    });
+  } catch (err) {
+    if (err.status === HttpStatus.NOT_FOUND) {
+      return null;
+    }
+    throw err;
+  }
+};
+
+/** @deprecated */
+export const getMeetingRecordings = async (meetingID: string) => {
+  try {
+    return await zoomRequest<ZoomMeetingRecording>({
+      path: `/meetings/${meetingID}/recordings`,
     });
   } catch (err) {
     if (err.status === HttpStatus.NOT_FOUND) {
