@@ -1,5 +1,4 @@
 import * as DB from '../../../../../utils/db';
-import { storeCloudRecording } from '../../../../../utils/db';
 import * as Zoom from '../../../../../utils/zoom';
 import { attemptTo, HandlerResponse } from '../../../helpers';
 
@@ -19,11 +18,10 @@ export const storeAllCloudRecordings = async (): Promise<HandlerResponse> => {
         console.error(recordingErr);
       }
 
-      // Utilizing notification handler to store cloud recordings
       await Promise.all(
         recordingList!.meetings.map(async meeting => {
           const [dbErr] = await attemptTo(`store recording for ${meeting.uuid}`, () =>
-            storeCloudRecording(meeting.uuid, meeting.share_url)
+            DB.storeCloudRecording(meeting.uuid, meeting.share_url)
           );
 
           if (dbErr) {
