@@ -19,7 +19,7 @@ export const storeAllCloudRecordings = async (): Promise<HandlerResponse> => {
       }
 
       await Promise.all(
-        recordingList!.meetings.map(async meeting => {
+        recordingList?.meetings.map(async meeting => {
           const [dbErr] = await attemptTo(`store recording for ${meeting.uuid}`, () =>
             DB.storeCloudRecording(meeting.uuid, meeting.share_url)
           );
@@ -29,7 +29,7 @@ export const storeAllCloudRecordings = async (): Promise<HandlerResponse> => {
           } else {
             recordingCount++;
           }
-        })
+        }) || []
       );
     })
   );
