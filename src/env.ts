@@ -1,7 +1,9 @@
 import 'dotenv/config';
 
 export const env = {
+  ARCHIVE_ZOOM_CALENDAR_ID: process.env.ARCHIVE_ZOOM_CALENDAR_ID || '',
   CALENDAR_OWNER_EMAIL: process.env.CALENDAR_OWNER_EMAIL || '',
+  FRONTEND_HOST: process.env.FRONTEND_HOST || 'http://localhost:3002',
   MASTER_ZOOM_CALENDAR_ID: process.env.MASTER_ZOOM_CALENDAR_ID || '',
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: process.env.PORT || 8000,
@@ -9,6 +11,7 @@ export const env = {
   SA_PRIVATE_KEY: (process.env.SA_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
   SA_CLIENT_EMAIL: process.env.SA_CLIENT_EMAIL || '',
   SENTRY_DSN: process.env.SENTRY_DSN || '',
+  TRIGGER_TOKEN: process.env.TRIGGER_TOKEN || '',
   ZOOM_API_KEY: process.env.ZOOM_API_KEY || '',
   ZOOM_API_SECRET: process.env.ZOOM_API_SECRET || '',
   ZOOM_NOTIFICATION_TOKEN: process.env.ZOOM_NOTIFICATION_TOKEN || '',

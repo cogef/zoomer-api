@@ -1,5 +1,5 @@
 import { zoomToRFCRecurrence } from '../src/utils/calendar';
-import { renderMeetingCreated, sendEmail } from '../src/utils/gmail';
+import { renderMeetingCreated } from '../src/utils/gmail';
 import { ZoomerMeetingRequest } from '../src/utils/zoom';
 
 describe('confirmation email', () => {
@@ -17,7 +17,7 @@ describe('confirmation email', () => {
       dialIns: meeting.settings.global_dial_in_numbers,
     });
 
-    expect(html).toContain(`https://zoom.cogef.org/host-join?meetingID=${meetingID}&amp;hostJoinKey=${12322}`);
+    expect(html).toContain(`/host-join?meetingID=${meetingID}&amp;hostJoinKey=${12322}`);
   });
 });
 

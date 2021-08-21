@@ -5,6 +5,10 @@ import { getIsUserAdmin } from './handlers';
 
 const router = Router();
 
+router.get('/x-status', (req, res) => {
+  res.send('active');
+});
+
 router.use(authenticate);
 
 router.use(initializeGAPIs);

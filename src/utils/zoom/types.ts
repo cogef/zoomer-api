@@ -115,10 +115,20 @@ export interface ZoomMeetingRecording {
     status: string;
     deleted_time: string;
     recording_type: string;
-  };
+  }[];
 }
 
-export interface ZoomEvent<T extends Object> {
+export interface UserRecordings {
+  from: string;
+  to: string;
+  page_count: number;
+  page_size: number;
+  total_records: number;
+  next_page_token: string;
+  meetings: ZoomMeetingRecording[];
+}
+
+interface BaseZoomEvent<T extends Object> {
   event: string;
   payload: {
     account_id: string;
@@ -126,18 +136,42 @@ export interface ZoomEvent<T extends Object> {
   };
 }
 
-export interface MeetingEndedObject {
-  uuid: string;
-  id: number;
-  host_id: number;
-  type: number;
-  topic: string;
-  start_time: string;
-  timezone: string;
-  /** Scheduled meeting duration */
-  duration: number;
-  end_time: string;
+export interface MeetingEndedEvent
+  extends BaseZoomEvent<{
+    uuid: string;
+    id: number;
+    host_id: number;
+    type: number;
+    topic: string;
+    start_time: string;
+    timezone: string;
+    /** Scheduled meeting duration */
+    duration: number;
+    end_time: string;
+  }> {
+  event: 'meeting.ended';
 }
+
+export interface RecordingCompletedEvent
+  extends BaseZoomEvent<{
+    uuid: string;
+    id: number;
+    host_id: number;
+    topic: string;
+    type: number;
+    start_time: string;
+    duration: number;
+    timezone: string;
+    host_email: string;
+    total_size: number;
+    recording_count: number;
+    share_url: string;
+    recording_files: {}[];
+  }> {
+  event: 'recording.completed';
+}
+
+export type ZoomEvent = MeetingEndedEvent | RecordingCompletedEvent | { event: 'unsupported' };
 
 export interface ZoomMeetingInstance {
   uuid: string;
@@ -150,6 +184,14 @@ export interface ZoomMeetingInstance {
   start_time: string;
   end_time: string;
   duration: number;
+  /** Sum of meeting minutes from all participants in the meeting */
   total_minutes: number;
-  participant_count: number;
+  participants_count: number;
+}
+
+export interface ZoomMeetingInstanceList {
+  meetings: {
+    uuid: string;
+    start_time: string;
+  }[];
 }

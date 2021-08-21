@@ -94,11 +94,11 @@ export const updateMeeting = async (
       `-------------------------------\n`,
       `${meetingReq.agenda}\n`,
       `-------------------------------`,
-      `Scheduled by ${dbMeeting.host.email} for ${ministries[meetingReq.ministry]} on ${account.email}`,
       `Meeting ID: ${meeting.id}`,
       `Password: ${meeting.password}`,
       `Host Key: ${hostKey}`,
       `Zoomer Host Join Key: ${hostJoinKey}`,
+      `Scheduled by ${dbMeeting.host.name} for ${ministries[meetingReq.ministry]} on ${account.email}`,
     ].join('\n');
 
     const rrule = meetingReq.recurrence ? Calendar.zoomToRFCRecurrence(meetingReq.recurrence) : undefined;

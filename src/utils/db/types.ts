@@ -1,26 +1,40 @@
 import { firestore } from 'firebase-admin';
 import { MinistryKey } from '../general';
-import { MeetingOccurance } from '../zoom';
+import { MeetingOccurance, ZoomMeetingInstance } from '../zoom';
 
-export type MeetingInfo = {
+interface ZoomerProps {
   zoomAccount: string;
-  title: string;
-  description: string;
-  startDate: Date;
-  endDate: Date;
-  meetingID: string;
   hostJoinKey: string;
   host: {
     ministry: MinistryKey;
     email: string;
     name: string;
   };
+}
+
+export interface ZoomerMeetingInstance
+  extends Omit<ZoomMeetingInstance, 'start_time' | 'end_time'>,
+    Omit<ZoomerProps, 'hostJoinKey'> {
+  start_time: Date;
+  end_time: Date;
+  description: string;
+  calendarEventId: string;
+  /** Link to cloud recording of meeting */
+  share_url?: string;
+}
+
+export interface MeetingInfo extends ZoomerProps {
+  title: string;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+  meetingID: string;
   calendarEvents: {
     zoomEventID: string;
     masterEventID: string;
   };
   reccurrence?: string;
-};
+}
 
 export type StoredMeeting = {
   createdAt: firestore.Timestamp;
@@ -38,7 +52,7 @@ export type StoredOccurrence = {
   host: {
     email: string;
     name: string;
-    ministry: string;
+    ministry: MinistryKey;
   };
   isSeudo: boolean;
   sequence: number;
@@ -46,11 +60,3 @@ export type StoredOccurrence = {
 };
 
 export type ZoomAccount = { calendarID: string; sequence: number; email: string };
-
-export interface MeetingInstanceInfo extends Omit<MeetingInfo, 'reccurrence' | 'hostJoinKey'> {
-  uuid: string;
-  type: number;
-  topic: string;
-  duration: number;
-  participantCount: number;
-}

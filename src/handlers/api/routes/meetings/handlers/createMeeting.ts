@@ -51,11 +51,11 @@ export const createMeeting = async (user: User, meetingReq: Zoom.ZoomerMeetingRe
       `-------------------------------\n`,
       `${meetingReq.agenda}\n`,
       `-------------------------------`,
-      `Scheduled by ${user.email} for ${ministries[meetingReq.ministry]} on ${account.email}`,
       `Meeting ID: ${meeting.id}`,
       `Password: ${meeting.password}`,
       `Host Key: ${hostKey}`,
       `Zoomer Host Join Key: ${hostJoinKey}`,
+      `Scheduled by ${user.displayName} for ${ministries[meetingReq.ministry]} on ${account.email}`,
     ].join('\n');
 
     const rrule = meetingReq.recurrence ? Calendar.zoomToRFCRecurrence(meetingReq.recurrence) : undefined;

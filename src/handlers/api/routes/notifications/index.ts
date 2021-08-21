@@ -1,8 +1,15 @@
 import { Router } from 'express';
 import { env } from '../../../../env';
-import { HttpStatus } from '../../helpers';
+import { ZoomEvent } from '../../../../utils/zoom';
+import { handleResponse, HttpStatus } from '../../helpers';
+import { initializeGAPIs } from '../../middleware';
+import { storeCloudRecording, storeMeetingInstance } from './handlers';
 
 const router = Router();
+
+router.get('/x-status', (req, res) => {
+  res.send('active');
+});
 
 // Verify Zoom as event originator
 router.post('*', (req, res, next) => {
@@ -12,12 +19,25 @@ router.post('*', (req, res, next) => {
   next();
 });
 
-router.post('/', (req, res) => {
-  res.send('hi');
-});
+router.use(initializeGAPIs);
 
-router.get('/', (req, res) => {
-  res.send('hi');
+router.post('/', (req, res) => {
+  const event: ZoomEvent = req.body;
+  switch (event.event) {
+    case 'meeting.ended': {
+      const handler = () => storeMeetingInstance(event.payload.object.uuid);
+      handleResponse(res, handler);
+      break;
+    }
+    case 'recording.completed': {
+      const handler = () => storeCloudRecording(event.payload.object.uuid, event.payload.object.share_url);
+      handleResponse(res, handler);
+      break;
+    }
+    default: {
+      res.sendStatus(HttpStatus.NOT_IMPLEMENTED);
+    }
+  }
 });
 
 export const NotificationsRouter = router;
