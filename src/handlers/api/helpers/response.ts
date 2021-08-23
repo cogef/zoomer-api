@@ -38,6 +38,7 @@ export const attemptTo = async <T>(
   cleanup?: () => any,
   failResult?: string
 ): Promise<AttemptResult<T>> => {
+  console.debug(`Attempting to ${attemptingTo}`);
   const res = await tryCatch(op);
 
   if (res[0] !== null) {

@@ -14,6 +14,7 @@ export const storeAllMeetingInstances = async (): Promise<HandlerResponse> => {
   }
 
   let instanceCount = 0;
+  let instanceFailedCount = 0;
 
   await Promise.all(
     dbMeetings!.map(async dbMeeting => {
@@ -22,6 +23,7 @@ export const storeAllMeetingInstances = async (): Promise<HandlerResponse> => {
       );
 
       if (instanceListErr) {
+        instanceFailedCount++;
         console.error(instanceListErr);
         captureException(instanceListErr.error);
         return;
@@ -56,6 +58,14 @@ export const storeAllMeetingInstances = async (): Promise<HandlerResponse> => {
     })
   );
 
-  console.log(`Successfully stored ${instanceCount} instances of ${dbMeetings!.length} meetings`);
-  return { success: true, data: {} };
+  const msg = `Successfully stored ${instanceCount} instances for ${dbMeetings!.length} meetings`;
+
+  if (instanceFailedCount > 0) {
+    const errMsg = `${msg}\nFailed to retrieve instances for ${instanceFailedCount} of ${dbMeetings!.length} meetings`;
+    console.error(errMsg);
+    return { success: false, error: errMsg };
+  }
+
+  console.log(msg);
+  return { success: true, data: { message: msg } };
 };

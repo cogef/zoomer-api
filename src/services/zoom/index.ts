@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import fetch from 'node-fetch';
+import { inspect } from 'util';
 import { env } from '../../env';
 import { HttpStatus } from '../../handlers/api/helpers';
 
@@ -25,8 +26,10 @@ export const zoomRequest = async <T>(opts: Options) => {
   });
 
   const status = res.status;
-
   let body: T = status === HttpStatus.NO_CONTENT ? null : await res.json();
+
+  console.debug(inspect({ headers: res.headers, uri: res.url, body }, undefined, null));
+
   if (status >= 400) {
     throw { context: 'zoom-request', status, error: body };
   }
