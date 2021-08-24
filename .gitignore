@@ -17,3 +17,6 @@ private
 
 # IDE
 .vscode
+
+# Logs
+*.log

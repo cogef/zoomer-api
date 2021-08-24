@@ -43,10 +43,11 @@
     "test": "jest",
     "test:full": "tsnd --transpile-only tests",
     "dev": "tsnd --transpile-only tests/runLocal.ts",
+    "emulators": "firebase emulators:start --project zoomer-dev --import tests/firebase_data",
+    "emulators:export": "firebase emulators:export tests/firebase_data",
     "build": "serverless package",
     "lint": "tsc --noEmit",
-    "deploy": "serverless deploy",
-    "loadData": "tsnd dev/loadData.ts"
+    "deploy": "serverless deploy"
   },
   "author": "Angel Campbell",
   "license": "ISC"
