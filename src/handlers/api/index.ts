@@ -3,7 +3,7 @@ import express from 'express';
 import serverless from 'serverless-http';
 import { env } from '../../env';
 import { HttpStatus } from './helpers';
-import { dev, logRequest } from './middleware';
+import { captureRequestID, dev, logRequest } from './middleware';
 import { MeetingsRouter, NotificationsRouter, TriggersRouter, UsersRouter } from './routes';
 
 export const app = express();
@@ -15,6 +15,8 @@ app.use('*', dev);
 app.options('*', (req, res) => {
   res.sendStatus(HttpStatus.NO_CONTENT);
 });
+
+app.use(captureRequestID);
 
 app.use(express.json());
 

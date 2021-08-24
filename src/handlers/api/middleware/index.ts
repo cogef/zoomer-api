@@ -1,4 +1,4 @@
-import { setUser } from '@sentry/serverless';
+import { setTag, setUser } from '@sentry/serverless';
 import { RequestHandler } from 'express';
 import { inspect } from 'util';
 import { env } from '../../../env';
@@ -13,6 +13,11 @@ export const initializeGAPIs: RequestHandler = async (req, res, next) => {
     console.error(err);
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error Initializing Google APIs');
   }
+  next();
+};
+
+export const captureRequestID: RequestHandler = (req, res, next) => {
+  setTag('request_id', req.headers['x-request-id']);
   next();
 };
 

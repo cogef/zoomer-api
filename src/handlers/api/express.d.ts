@@ -7,3 +7,9 @@ declare global {
     }
   }
 }
+
+declare module 'http' {
+  interface IncomingHttpHeaders {
+    'x-request-id'?: number;
+  }
+}
