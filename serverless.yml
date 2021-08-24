@@ -25,7 +25,9 @@ provider:
   apiName: ${self:service}-${self:provider.stage}
 
   environment:
+    ARCHIVE_ZOOM_CALENDAR_ID: ${env:ARCHIVE_ZOOM_CALENDAR_ID}
     CALENDAR_OWNER_EMAIL: ${env:CALENDAR_OWNER_EMAIL}
+    FRONTEND_HOST: ${env:FRONTEND_HOST}
     MASTER_ZOOM_CALENDAR_ID: ${env:MASTER_ZOOM_CALENDAR_ID}
     NODE_ENV: ${env:NODE_ENV, 'development'}
     SA_PROJECT_ID: ${env:SA_PROJECT_ID}
@@ -38,8 +40,10 @@ provider:
     SA_AUTH_PROVIDER_X509_CERT_URL: ${env:SA_AUTH_PROVIDER_X509_CERT_URL}
     SA_CLIENT_X509_CERT_URL: ${env:SA_CLIENT_X509_CERT_URL}
     SENTRY_DSN: ${env:SENTRY_DSN}
+    TRIGGER_TOKEN: ${env:TRIGGER_TOKEN}
     ZOOM_API_KEY: ${env:ZOOM_API_KEY}
     ZOOM_API_SECRET: ${env:ZOOM_API_SECRET}
+    ZOOM_NOTIFICATION_TOKEN: ${env:ZOOM_NOTIFICATION_TOKEN}
 
   httpApi:
     name: ${self:service}-${self:provider.stage}
