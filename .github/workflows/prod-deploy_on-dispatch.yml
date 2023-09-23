@@ -20,7 +20,7 @@ jobs:
         run: npm run test
 
       - name: Install serverless
-        run: npm i -D serverless
+        run: npm i -D serverless@"<3.0.0"
 
       - name: Serverless build and deploy
         run: npm run deploy -- --stage prod
