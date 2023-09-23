@@ -12,7 +12,8 @@ export const env = {
   SA_CLIENT_EMAIL: process.env.SA_CLIENT_EMAIL || '',
   SENTRY_DSN: process.env.SENTRY_DSN || '',
   TRIGGER_TOKEN: process.env.TRIGGER_TOKEN || '',
-  ZOOM_API_KEY: process.env.ZOOM_API_KEY || '',
-  ZOOM_API_SECRET: process.env.ZOOM_API_SECRET || '',
+  ZOOM_ACCOUNT_ID: process.env.ZOOM_ACCOUNT_ID || '',
+  ZOOM_CLIENT_ID: process.env.ZOOM_CLIENT_ID || '',
+  ZOOM_CLIENT_SECRET: process.env.ZOOM_CLIENT_SECRET || '',
   ZOOM_NOTIFICATION_TOKEN: process.env.ZOOM_NOTIFICATION_TOKEN || '',
 };

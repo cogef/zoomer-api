@@ -1,6 +1,6 @@
 import { stripFracSec } from '../src/utils/general';
 import { ZoomerMeetingRequest } from '../src/utils/zoom';
-import { cancelMeeting, getUser, scheduleMeeting, updateMeeting } from '../src/utils/zoom/requests';
+import { cancelMeeting } from '../src/utils/zoom/requests';
 
 const meetingReq1: ZoomerMeetingRequest = {
   agenda: 'Super important meeting',
