@@ -49,6 +49,7 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
           TRIGGER_TOKEN: ${{ secrets.TRIGGER_TOKEN }}
-          ZOOM_API_KEY: ${{ secrets.ZOOM_API_KEY }}
-          ZOOM_API_SECRET: ${{ secrets.ZOOM_API_SECRET }}
+          ZOOM_ACCOUNT_ID: ${{ secrets.ZOOM_ACCOUNT_ID }}
+          ZOOM_CLIENT_ID: ${{ secrets.ZOOM_CLIENT_ID }}
+          ZOOM_CLIENT_SECRET: ${{ secrets.ZOOM_CLIENT_SECRET }}
           ZOOM_NOTIFICATION_TOKEN: ${{ secrets.ZOOM_NOTIFICATION_TOKEN }}
