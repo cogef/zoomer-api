@@ -32,7 +32,6 @@
     "@types/randomstring": "^1.1.6",
     "babel-jest": "^26.6.3",
     "jest": "^26.6.3",
-    "serverless-dotenv-plugin": "^3.1.0",
     "serverless-plugin-typescript": "^1.1.9",
     "ts-jest": "^26.4.4",
     "ts-node-dev": "^1.1.1",

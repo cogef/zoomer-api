@@ -5,11 +5,12 @@ org: cogef
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
-frameworkVersion: '2'
+frameworkVersion: '3'
+
+useDotenv: true
 
 plugins:
   - serverless-plugin-typescript
-  - serverless-dotenv-plugin
 
 package:
   include:
